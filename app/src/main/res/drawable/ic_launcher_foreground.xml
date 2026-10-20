@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Location Pin Outer Shell -->
+    <path
+        android:pathData="M 54,22 C 38.5,22 26,34.5 26,50 C 26,67.5 50,85 54,88 C 58,85 82,67.5 82,50 C 82,34.5 69.5,22 54,22 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="26"
+                android:startY="22"
+                android:endX="82"
+                android:endY="88"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF0088FF" />
+                <item android:offset="1.0" android:color="#FF0055CC" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Pin Inner Core / Canvas -->
+    <path
+        android:pathData="M 54,27 C 41.5,27 31.5,37 31.5,49.5 C 31.5,62 51,77 54,79 C 57,77 76.5,62 76.5,49.5 C 76.5,37 66.5,27 54,27 Z"
+        android:fillColor="#FF081022" />
+
+    <!-- Center Person (Gold / Orange) -->
+    <!-- Head -->
+    <path
+        android:pathData="M 54,36 A 4.5,4.5 0 1,0 54,45 A 4.5,4.5 0 1,0 54,36 Z"
+        android:fillColor="#FFFF6D00" />
+    <!-- Torso -->
+    <path
+        android:pathData="M 47,54 C 47,48.5 50,46.5 54,46.5 C 58,46.5 61,48.5 61,54 Z"
+        android:fillColor="#FFFF6D00" />
+
+    <!-- Left Person (Green / Cyan) -->
+    <!-- Head -->
+    <path
+        android:pathData="M 42,42 A 3.8,3.8 0 1,0 42,49.6 A 3.8,3.8 0 1,0 42,42 Z"
+        android:fillColor="#FF00E5FF" />
+    <!-- Torso -->
+    <path
+        android:pathData="M 36,58 C 36,53 38.5,51 42,51 C 45.5,51 48,53 48,58 Z"
+        android:fillColor="#FF00E5FF" />
+
+    <!-- Right Person (Emerald Green) -->
+    <!-- Head -->
+    <path
+        android:pathData="M 66,42 A 3.8,3.8 0 1,0 66,49.6 A 3.8,3.8 0 1,0 66,42 Z"
+        android:fillColor="#FF00C853" />
+    <!-- Torso -->
+    <path
+        android:pathData="M 60,58 C 60,53 62.5,51 66,51 C 69.5,51 72,53 72,58 Z"
+        android:fillColor="#FF00C853" />
+
+    <!-- Connection Orbit Ring / Swosh -->
+    <path
+        android:pathData="M 34,58 C 34,64 74,64 74,58 C 74,53 34,53 34,58 Z"
+        android:strokeColor="#FF00A3FF"
+        android:strokeWidth="2.5"
+        android:fillColor="#00000000" />
+</vector>
