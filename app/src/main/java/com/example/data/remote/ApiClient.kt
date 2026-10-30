@@ -10,8 +10,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-    // Default to host machine Wi-Fi IP (works for physical Android phones on same network)
-    var baseUrl: String = "http://192.168.0.48:8000/"
+    // Default Linkora cloud production API gateway (eliminates local IP configuration)
+    var baseUrl: String = "https://api.linkora.co.tz/"
 
     private const val PREFS_NAME = "marketlink_network_prefs"
     private const val KEY_BASE_URL = "backend_base_url"

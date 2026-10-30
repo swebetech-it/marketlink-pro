@@ -1077,12 +1077,8 @@ fun AuthScreen(
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             AssistChip(
-                                onClick = { serverUrlInput = "http://192.168.0.48:8000/" },
-                                label = { Text("Wi-Fi (192.168.0.48)", fontSize = 10.sp) }
-                            )
-                            AssistChip(
-                                onClick = { serverUrlInput = "http://10.0.2.2:8000/" },
-                                label = { Text("Emulator (10.0.2.2)", fontSize = 10.sp) }
+                                onClick = { serverUrlInput = "https://api.linkora.co.tz/" },
+                                label = { Text("Linkora Cloud (api.linkora.co.tz)", fontSize = 10.sp, fontWeight = FontWeight.Bold) }
                             )
                         }
 
@@ -1091,12 +1087,12 @@ fun AuthScreen(
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             AssistChip(
-                                onClick = { serverUrlInput = "http://198.199.80.100:8000/" },
-                                label = { Text("Cloud (198.199.80.100)", fontSize = 10.sp) }
+                                onClick = { serverUrlInput = "http://10.0.2.2:8000/" },
+                                label = { Text("Emulator (10.0.2.2)", fontSize = 10.sp) }
                             )
                             AssistChip(
                                 onClick = { serverUrlInput = "http://127.0.0.1:8000/" },
-                                label = { Text("ADB Reverse (127.0.0.1)", fontSize = 10.sp) }
+                                label = { Text("ADB Reverse", fontSize = 10.sp) }
                             )
                         }
                     }

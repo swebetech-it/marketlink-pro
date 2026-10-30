@@ -405,12 +405,8 @@ fun BackendServerConfigDialog(
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     AssistChip(
-                        onClick = { urlInput = "http://192.168.100.104:8000/" },
-                        label = { Text("Wi-Fi Phone (192.168.100.104)", fontSize = 10.sp) }
-                    )
-                    AssistChip(
-                        onClick = { urlInput = "http://10.0.2.2:8000/" },
-                        label = { Text("Emulator", fontSize = 10.sp) }
+                        onClick = { urlInput = "https://api.linkora.co.tz/" },
+                        label = { Text("Linkora Cloud (api.linkora.co.tz)", fontSize = 10.sp, fontWeight = FontWeight.Bold) }
                     )
                 }
 
@@ -419,8 +415,12 @@ fun BackendServerConfigDialog(
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     AssistChip(
+                        onClick = { urlInput = "http://10.0.2.2:8000/" },
+                        label = { Text("Emulator (10.0.2.2)", fontSize = 10.sp) }
+                    )
+                    AssistChip(
                         onClick = { urlInput = "http://127.0.0.1:8000/" },
-                        label = { Text("ADB Reverse (127.0.0.1)", fontSize = 10.sp) }
+                        label = { Text("ADB Reverse", fontSize = 10.sp) }
                     )
                 }
 

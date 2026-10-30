@@ -31,7 +31,7 @@ import com.example.ui.theme.*
 @Composable
 fun AdminPortalScreen(
     isSwahili: Boolean,
-    defaultUrl: String = "http://10.0.2.2:8000/admin",
+    defaultUrl: String = "https://linkora.co.tz/admin",
     onCloseClick: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
@@ -248,6 +248,15 @@ fun AdminPortalScreen(
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         modifier = Modifier.padding(top = 4.dp)
+                    ) {
+                        SuggestionChip(
+                            onClick = { customUrlInput = "https://linkora.co.tz/admin" },
+                            label = { Text("Linkora Portal (linkora.co.tz)", fontSize = 10.sp) }
+                        )
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.padding(top = 2.dp)
                     ) {
                         SuggestionChip(
                             onClick = { customUrlInput = "http://10.0.2.2:8000/admin" },

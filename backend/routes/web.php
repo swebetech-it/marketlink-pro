@@ -1,14 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\AdminWebController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Middleware\AdminAuthMiddleware;
 
-// Main Portal redirect
-Route::get('/', function () {
-    return redirect()->route('admin.dashboard');
-})->name('home');
+// Linkora Main Public Landing Page & API Subdomain Handlers
+Route::get('/', [LandingPageController::class, 'index'])->name('home');
+Route::get('/download', [LandingPageController::class, 'downloadApk'])->name('download.apk');
 
 // SuperAdmin Authentication Routes (Public)
 Route::prefix('admin')->name('admin.')->group(function () {
