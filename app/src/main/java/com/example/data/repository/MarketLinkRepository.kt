@@ -128,8 +128,8 @@ class MarketLinkRepository(private val db: MarketLinkDatabase) {
             }
         } catch (e: Exception) {
             val msg = e.localizedMessage ?: e.message ?: "Connection error"
-            Log.e("MarketLinkRepo", "Remote login failed connecting to ${ApiClient.baseUrl}: $msg", e)
-            return@withContext Pair(null, "Cannot connect to server at ${ApiClient.baseUrl} ($msg). Please verify your Server URL.")
+            Log.e("MarketLinkRepo", "Remote login failed: $msg", e)
+            return@withContext Pair(null, "Hitilafu ya kuunganisha mtandao. Tafadhali hakikisha simu yako ina intaneti kisha jaribu tena.")
         }
     }
 

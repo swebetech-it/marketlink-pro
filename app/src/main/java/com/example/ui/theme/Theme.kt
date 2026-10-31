@@ -44,7 +44,7 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun MarketLinkProTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
@@ -70,7 +70,8 @@ fun formTextFieldColors(): TextFieldColors {
         focusedTextColor = SlateTextPrimary,
         unfocusedTextColor = SlateTextPrimary,
         focusedContainerColor = Color.White,
-        unfocusedContainerColor = Color(0xFFF8FAFC),
+        unfocusedContainerColor = Color.White,
+        cursorColor = EmeraldPrimary,
         focusedBorderColor = EmeraldPrimary,
         unfocusedBorderColor = Color(0xFFCBD5E1),
         focusedLabelColor = EmeraldPrimary,

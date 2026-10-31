@@ -57,7 +57,7 @@ fun UserRegistrationDialog(
     var orgName by remember { mutableStateOf("") }
     var tinNumber by remember { mutableStateOf("") }
     var industrySector by remember { mutableStateOf("Agribusiness & Commercial") }
-    var primaryProfession by remember { mutableStateOf("CLEANING_SANITATION") }
+    var primaryProfession by remember { mutableStateOf("IT_SOFTWARE") }
     var district by remember { mutableStateOf("Mbeya Mjini") }
     var phone by remember { mutableStateOf("+255 ") }
     var email by remember { mutableStateOf("") }
@@ -335,6 +335,8 @@ fun UserRegistrationDialog(
                     Box(modifier = Modifier.fillMaxWidth()) {
                         OutlinedCard(
                             onClick = { professionDropdownExpanded = true },
+                            colors = CardDefaults.outlinedCardColors(containerColor = Color.White),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCBD5E1)),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Row(
@@ -456,6 +458,8 @@ fun UserRegistrationDialog(
                 Box(modifier = Modifier.fillMaxWidth()) {
                     OutlinedCard(
                         onClick = { districtDropdownExpanded = true },
+                        colors = CardDefaults.outlinedCardColors(containerColor = Color.White),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCBD5E1)),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
@@ -468,9 +472,9 @@ fun UserRegistrationDialog(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Default.LocationOn, contentDescription = null, tint = BrandOrange)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text(text = district, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                                Text(text = district, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = SlateTextPrimary)
                             }
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = SlateTextPrimary)
                         }
                     }
 

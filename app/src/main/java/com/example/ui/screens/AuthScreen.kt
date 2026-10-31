@@ -82,7 +82,7 @@ fun AuthScreen(
     var signUpOrgName by remember { mutableStateOf("") }
     var signUpTinNumber by remember { mutableStateOf("") }
     var signUpIndustrySector by remember { mutableStateOf("Agribusiness & Commercial") }
-    var signUpPrimaryProfession by remember { mutableStateOf("CLEANING_SANITATION") }
+    var signUpPrimaryProfession by remember { mutableStateOf("IT_SOFTWARE") }
     var signUpDistrict by remember { mutableStateOf("Mbeya Mjini") }
     var signUpPhone by remember { mutableStateOf("+255 ") }
     var signUpEmail by remember { mutableStateOf("") }
@@ -423,12 +423,12 @@ fun AuthScreen(
                                         onSignInWithCredentials(inputClean, passwordClean) { success, err ->
                                             isSigningIn = false
                                             if (!success) {
-                                                signInErrorMessage = err ?: (if (isSwahili) "Akaunti haijapatikana kwenye seva ya backend." else "Account not found on backend database.")
+                                                signInErrorMessage = err ?: (if (isSwahili) "Akaunti haijapatikana au nenosiri si sahihi." else "Account not found or password incorrect.")
                                             }
                                         }
                                     } else {
                                         isSigningIn = false
-                                        signInErrorMessage = if (isSwahili) "Seva ya backend haijasanidiwa." else "Backend server not configured."
+                                        signInErrorMessage = if (isSwahili) "Hitilafu ya mtandao. Tafadhali jaribu tena." else "Network error. Please try again."
                                     }
                                 },
                                 enabled = !isSigningIn,
@@ -686,6 +686,8 @@ fun AuthScreen(
                                 Box(modifier = Modifier.fillMaxWidth()) {
                                     OutlinedCard(
                                         onClick = { professionDropdownExpanded = true },
+                                        colors = CardDefaults.outlinedCardColors(containerColor = Color.White),
+                                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCBD5E1)),
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
                                         Row(
@@ -705,7 +707,7 @@ fun AuthScreen(
                                                     color = SlateTextPrimary
                                                 )
                                             }
-                                            Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                                            Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = SlateTextPrimary)
                                         }
                                     }
 
@@ -807,6 +809,8 @@ fun AuthScreen(
                             Box(modifier = Modifier.fillMaxWidth()) {
                                 OutlinedCard(
                                     onClick = { districtDropdownExpanded = true },
+                                    colors = CardDefaults.outlinedCardColors(containerColor = Color.White),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCBD5E1)),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Row(
@@ -819,9 +823,9 @@ fun AuthScreen(
                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                             Icon(Icons.Default.LocationOn, contentDescription = null, tint = BrandOrange)
                                             Spacer(modifier = Modifier.width(8.dp))
-                                            Text(text = signUpDistrict, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                                            Text(text = signUpDistrict, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = SlateTextPrimary)
                                         }
-                                        Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                                        Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = SlateTextPrimary)
                                     }
                                 }
 
@@ -911,7 +915,7 @@ fun AuthScreen(
                                     ) { success, err ->
                                         isSigningIn = false
                                         if (!success) {
-                                            signUpErrorMessage = err ?: (if (isSwahili) "Imeshindwa kusajili kwenye seva ya backend." else "Failed to register on backend server.")
+                                            signUpErrorMessage = err ?: (if (isSwahili) "Imeshindwa kusajili akaunti. Tafadhali hakiki taarifa zako." else "Registration failed. Please verify your details.")
                                         }
                                     }
                                 },
@@ -946,180 +950,7 @@ fun AuthScreen(
                 }
             }
 
-            // Backend Server & Sync Controls
-            Surface(
-                color = SlateSurface,
-                shape = RoundedCornerShape(12.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF334155)),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                Column(modifier = Modifier.padding(14.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Surface(
-                                shape = CircleShape,
-                                color = BrandGreen,
-                                modifier = Modifier.size(8.dp)
-                            ) {}
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = "Laravel API: $currentServerUrl",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = SlateTextSecondary
-                            )
-                        }
-
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            IconButton(
-                                onClick = { showServerConfigDialog = true },
-                                modifier = Modifier.size(28.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Settings,
-                                    contentDescription = "Server Settings",
-                                    tint = BrandBlue,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
-
-                            IconButton(
-                                onClick = {
-                                    if (onTriggerSync != null) {
-                                        isSyncingServer = true
-                                        syncFeedbackMessage = null
-                                        onTriggerSync { success ->
-                                            isSyncingServer = false
-                                            syncFeedbackMessage = if (success)
-                                                (if (isSwahili) "Data zimesawazishwa kikamilifu!" else "Data synced successfully with backend!")
-                                            else
-                                                (if (isSwahili) "Imeshindwa kuunganisha seva. Angalia URL." else "Server sync failed. Check URL.")
-                                        }
-                                    }
-                                },
-                                enabled = !isSyncingServer,
-                                modifier = Modifier.size(28.dp)
-                            ) {
-                                if (isSyncingServer) {
-                                    CircularProgressIndicator(modifier = Modifier.size(14.dp), strokeWidth = 2.dp, color = BrandBlue)
-                                } else {
-                                    Icon(
-                                        imageVector = Icons.Default.Refresh,
-                                        contentDescription = "Sync Now",
-                                        tint = BrandGreen,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    if (syncFeedbackMessage != null) {
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = syncFeedbackMessage!!,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (syncFeedbackMessage!!.contains("success", ignoreCase = true) || syncFeedbackMessage!!.contains("kikamilifu", ignoreCase = true)) BrandGreen else RedWarning
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-
-        // Server URL Configuration Dialog
-        if (showServerConfigDialog) {
-            AlertDialog(
-                onDismissRequest = { showServerConfigDialog = false },
-                title = {
-                    Text(
-                        text = if (isSwahili) "Mipangilio ya Seva ya Backend" else "Backend Server Configuration",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                text = {
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text(
-                            text = if (isSwahili)
-                                "Chagua au weka URL ya seva ya Laravel ili kusawazisha data kati ya simu na tovuti ya usimamizi."
-                            else
-                                "Choose or enter the Laravel backend server URL to synchronize data between mobile and web admin portal.",
-                            fontSize = 12.sp,
-                            color = SlateTextSecondary
-                        )
-
-                        OutlinedTextField(
-                            value = serverUrlInput,
-                            onValueChange = { serverUrlInput = it },
-                            label = { Text("Base URL") },
-                            singleLine = true,
-                            colors = formTextFieldColors(),
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        Text(
-                            text = if (isSwahili) "Mipangilio ya Haraka:" else "Quick Presets:",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            AssistChip(
-                                onClick = { serverUrlInput = "https://api.linkora.co.tz/" },
-                                label = { Text("Linkora Cloud (api.linkora.co.tz)", fontSize = 10.sp, fontWeight = FontWeight.Bold) }
-                            )
-                        }
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            AssistChip(
-                                onClick = { serverUrlInput = "http://10.0.2.2:8000/" },
-                                label = { Text("Emulator (10.0.2.2)", fontSize = 10.sp) }
-                            )
-                            AssistChip(
-                                onClick = { serverUrlInput = "http://127.0.0.1:8000/" },
-                                label = { Text("ADB Reverse", fontSize = 10.sp) }
-                            )
-                        }
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            currentServerUrl = serverUrlInput
-                            onUpdateBaseUrl?.invoke(serverUrlInput) { success ->
-                                syncFeedbackMessage = if (success)
-                                    (if (isSwahili) "Seva imeunganishwa kikamilifu!" else "Server connected & synced!")
-                                else
-                                    (if (isSwahili) "Imeshindwa kuunganisha." else "Connection failed.")
-                            }
-                            showServerConfigDialog = false
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = BrandBlue)
-                    ) {
-                        Text(if (isSwahili) "Hifadhi & Sawazisha" else "Save & Sync", color = Color.White)
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showServerConfigDialog = false }) {
-                        Text(if (isSwahili) "Ghairi" else "Cancel")
-                    }
-                }
-            )
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }

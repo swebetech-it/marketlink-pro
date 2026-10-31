@@ -303,6 +303,7 @@ fun ReputationPassportScreen(
                         label = { Text("NIDA ID Number") },
                         placeholder = { Text("19940812-21104-00001-26") },
                         singleLine = true,
+                        colors = formTextFieldColors(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("input_nida_number")
@@ -317,10 +318,10 @@ fun ReputationPassportScreen(
                             showNidaDialog = false
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White),
                     modifier = Modifier.testTag("submit_nida_button")
                 ) {
-                    Text(if (isSwahili) "Hifadhi NIDA" else "Verify & Save")
+                    Text(if (isSwahili) "Hifadhi NIDA" else "Verify & Save", color = Color.White)
                 }
             },
             dismissButton = {

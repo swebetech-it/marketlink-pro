@@ -176,18 +176,57 @@ private data class RepoPartB(
         _aiMatchScore,
         _aiFraudWarning
     ) { filter, data, matchExp, matchScore, fraudWarning ->
-        val filteredListings = data.listings.filter { item ->
-            val matchesQuery = filter.searchQuery.isBlank() ||
-                    item.title.contains(filter.searchQuery, ignoreCase = true) ||
-                    item.description.contains(filter.searchQuery, ignoreCase = true) ||
-                    item.location.contains(filter.searchQuery, ignoreCase = true) ||
-                    item.requiredSkills.any { it.contains(filter.searchQuery, ignoreCase = true) }
+        val user = data.userProfile ?: defaultUserProfile
+        val userProfNorm = user.primaryProfession.uppercase()
+        val userSkillsNorm = user.skills.joinToString(" ").lowercase()
+        val isUserIt = userProfNorm.contains("IT") || userProfNorm.contains("SOFTWARE") ||
+                userSkillsNorm.contains("software") || userSkillsNorm.contains("developer") ||
+                userSkillsNorm.contains("computer") || userSkillsNorm.contains("network") ||
+                userSkillsNorm.contains("kotlin") || userSkillsNorm.contains("laravel")
 
-            val matchesCat = filter.selectedCategory == null || item.category == filter.selectedCategory
-            val matchesRegion = filter.selectedRegion == "All Regions" || item.location.contains(filter.selectedRegion, ignoreCase = true)
+        val scoredListings = data.listings.map { item ->
+            val targetProfNorm = (item.targetProfession ?: "").uppercase()
+            val jobText = (item.title + " " + item.description + " " + item.requiredSkills.joinToString(" ")).lowercase()
 
-            matchesQuery && matchesCat && matchesRegion
+            val isJobCleaning = targetProfNorm.contains("CLEANING") ||
+                    jobText.contains("usafi") || jobText.contains("cleaner") ||
+                    jobText.contains("kuosha") || jobText.contains("housekeeping") || jobText.contains("janitor")
+
+            val isJobIt = targetProfNorm.contains("IT") || targetProfNorm.contains("SOFTWARE") ||
+                    jobText.contains("software") || jobText.contains("developer") ||
+                    jobText.contains("network") || jobText.contains("system") || jobText.contains("database")
+
+            val dynamicScore = when {
+                isUserIt && isJobCleaning -> 12
+                isUserIt && isJobIt -> 95
+                userProfNorm.contains("CLEAN") && isJobCleaning -> 93
+                userProfNorm.contains("CLEAN") && isJobIt -> 10
+                userProfNorm.isNotBlank() && targetProfNorm.isNotBlank() && userProfNorm == targetProfNorm -> 90
+                item.matchScore > 0 -> item.matchScore
+                else -> {
+                    val matching = user.skills.count { skill ->
+                        item.requiredSkills.any { req -> req.contains(skill, ignoreCase = true) || skill.contains(req, ignoreCase = true) }
+                    }
+                    if (matching > 0) minOf(94, 75 + (matching * 6)) else 45
+                }
+            }
+            item.copy(matchScore = dynamicScore)
         }
+
+        val filteredListings = scoredListings
+            .filter { item ->
+                val matchesQuery = filter.searchQuery.isBlank() ||
+                        item.title.contains(filter.searchQuery, ignoreCase = true) ||
+                        item.description.contains(filter.searchQuery, ignoreCase = true) ||
+                        item.location.contains(filter.searchQuery, ignoreCase = true) ||
+                        item.requiredSkills.any { it.contains(filter.searchQuery, ignoreCase = true) }
+
+                val matchesCat = filter.selectedCategory == null || item.category == filter.selectedCategory
+                val matchesRegion = filter.selectedRegion == "All Regions" || item.location.contains(filter.selectedRegion, ignoreCase = true)
+
+                matchesQuery && matchesCat && matchesRegion
+            }
+            .sortedByDescending { it.matchScore }
 
         MarketLinkUiState(
             isLoggedIn = filter.isLoggedIn,
@@ -378,7 +417,10 @@ private data class RepoPartB(
                 userSkills = skills,
                 userLocation = loc,
                 listingTitle = listing.title,
-                listingReqs = listing.requiredSkills
+                listingReqs = listing.requiredSkills,
+                userProfession = profile?.primaryProfession,
+                targetProfession = listing.targetProfession,
+                isSwahili = _isSwahili.value
             )
 
             _aiMatchScore.value = score

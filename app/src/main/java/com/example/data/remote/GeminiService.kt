@@ -21,13 +21,75 @@ object GeminiService {
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    suspend fun analyzeMatchScore(userSkills: List<String>, userLocation: String, listingTitle: String, listingReqs: List<String>): Pair<Int, String> = withContext(Dispatchers.IO) {
+    suspend fun analyzeMatchScore(
+        userSkills: List<String>,
+        userLocation: String,
+        listingTitle: String,
+        listingReqs: List<String>,
+        userProfession: String? = null,
+        targetProfession: String? = null,
+        isSwahili: Boolean = true
+    ): Pair<Int, String> = withContext(Dispatchers.IO) {
+        val userProfNorm = (userProfession ?: "").uppercase()
+        val targetProfNorm = (targetProfession ?: "").uppercase()
+        val skillsAndProf = (userSkills.joinToString(" ") + " " + userProfNorm).lowercase()
+        val jobText = (listingTitle + " " + listingReqs.joinToString(" ") + " " + targetProfNorm).lowercase()
+
+        val isUserIt = userProfNorm.contains("IT") || userProfNorm.contains("SOFTWARE") ||
+                skillsAndProf.contains("software") || skillsAndProf.contains("developer") ||
+                skillsAndProf.contains("kotlin") || skillsAndProf.contains("laravel") ||
+                skillsAndProf.contains("network") || skillsAndProf.contains("computer")
+
+        val isJobCleaning = targetProfNorm.contains("CLEANING") ||
+                jobText.contains("usafi") || jobText.contains("cleaner") ||
+                jobText.contains("kuosha") || jobText.contains("housekeeping") || jobText.contains("janitor")
+
+        val isJobIt = targetProfNorm.contains("IT") || targetProfNorm.contains("SOFTWARE") ||
+                jobText.contains("software") || jobText.contains("developer") ||
+                jobText.contains("network") || jobText.contains("system") || jobText.contains("database")
+
+        // 1. Direct Mismatch: IT worker looking at Sanitation/Cleaning
+        if (isUserIt && isJobCleaning) {
+            val expl = if (isSwahili)
+                "Ulinganifu wa chini (12%). Fursa hii ni ya kazi za Usafi na Mazingira, haiendani na taaluma yako ya TEHAMA / Programu."
+            else
+                "Low compatibility (12%). This opportunity is in Sanitation & Cleaning and does not align with your IT & Software engineering profession."
+            return@withContext Pair(12, expl)
+        }
+
+        // 2. Direct Match: IT worker looking at IT opportunity
+        if (isUserIt && isJobIt) {
+            val expl = if (isSwahili)
+                "Ulinganifu wa juu sana (95%)! Fursa hii inaoana moja kwa moja na utaalamu wako wa TEHAMA na uhandisi wa programu."
+            else
+                "High match (95%)! This opportunity directly aligns with your IT profession and systems software skills."
+            return@withContext Pair(95, expl)
+        }
+
+        // 3. Direct Match: Cleaning worker looking at Cleaning opportunity
+        if (userProfNorm.contains("CLEAN") && isJobCleaning) {
+            val expl = if (isSwahili)
+                "Ulinganifu wa juu (92%)! Kazi hii inaoana moja kwa moja na ujuzi wako wa usafi wa majengo na mazingira."
+            else
+                "High match (92%)! This role directly matches your sanitation and housekeeping expertise."
+            return@withContext Pair(92, expl)
+        }
+
         val apiKey = BuildConfig.GEMINI_API_KEY
         if (apiKey.isEmpty() || apiKey == "MY_GEMINI_API_KEY") {
-            // Smart fallback offline score calculator
-            val matching = userSkills.count { skill -> listingReqs.any { req -> req.contains(skill, ignoreCase = true) || skill.contains(req, ignoreCase = true) } }
-            val score = (70 + (matching * 10)).coerceAtMost(98)
-            val explanation = "High alignment based on skills (${userSkills.joinToString()}) and location compatibility in $userLocation."
+            // Smart offline heuristic
+            val matching = userSkills.count { skill ->
+                listingReqs.any { req -> req.contains(skill, ignoreCase = true) || skill.contains(req, ignoreCase = true) }
+            }
+            val baseScore = if (userProfNorm.isNotBlank() && targetProfNorm.isNotBlank() && userProfNorm == targetProfNorm) 80 else 40
+            val score = (baseScore + (matching * 6)).coerceIn(20, 96)
+            val explanation = if (score >= 70) {
+                if (isSwahili) "Ulinganifu mzuri kulingana na ujuzi wako na mahitaji ya nafasi hii katika $userLocation."
+                else "Good compatibility based on your skills and location alignment in $userLocation."
+            } else {
+                if (isSwahili) "Ulinganifu wa wastani ($score%). Fursa hii inahitaji ujuzi tofauti kidogo na sifa zako."
+                else "Moderate compatibility ($score%). This listing requires different qualifications from your profile."
+            }
             return@withContext Pair(score, explanation)
         }
 
@@ -35,7 +97,7 @@ object GeminiService {
             val prompt = """
                 You are Linkora's AI Matchmaking Engine in Tanzania.
                 Evaluate candidate match for opportunity: '$listingTitle' requiring [${listingReqs.joinToString()}].
-                Candidate skills: [${userSkills.joinToString()}], location: '$userLocation'.
+                Candidate profession: '$userProfession', skills: [${userSkills.joinToString()}], location: '$userLocation'.
                 Return JSON format ONLY:
                 {
                    "matchScore": 88,

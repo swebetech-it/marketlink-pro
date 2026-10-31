@@ -306,13 +306,13 @@ fun AdminAndUssdScreen(
                                         if (!isActive) {
                                             Button(
                                                 onClick = { onSwitchProfile(user) },
-                                                colors = ButtonDefaults.buttonColors(containerColor = BrandGreen),
+                                                colors = ButtonDefaults.buttonColors(containerColor = BrandGreen, contentColor = Color.White),
                                                 shape = RoundedCornerShape(6.dp),
                                                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
                                             ) {
-                                                Icon(Icons.Default.SwapHoriz, contentDescription = null, modifier = Modifier.size(14.dp))
+                                                Icon(Icons.Default.SwapHoriz, contentDescription = null, modifier = Modifier.size(14.dp), tint = Color.White)
                                                 Spacer(modifier = Modifier.width(4.dp))
-                                                Text(if (isSwahili) "Tumia Akaunti Hii" else "Switch Profile", fontSize = 11.sp)
+                                                Text(if (isSwahili) "Tumia Akaunti Hii" else "Switch Profile", fontSize = 11.sp, color = Color.White)
                                             }
                                         }
 
@@ -433,13 +433,13 @@ fun AdminAndUssdScreen(
 
                                     Button(
                                         onClick = { onDeleteListing(listing.id) },
-                                        colors = ButtonDefaults.buttonColors(containerColor = RedWarning),
+                                        colors = ButtonDefaults.buttonColors(containerColor = RedWarning, contentColor = Color.White),
                                         shape = RoundedCornerShape(6.dp),
                                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
                                     ) {
-                                        Icon(Icons.Default.DeleteForever, contentDescription = null, modifier = Modifier.size(14.dp))
+                                        Icon(Icons.Default.DeleteForever, contentDescription = null, modifier = Modifier.size(14.dp), tint = Color.White)
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Takedown", fontSize = 11.sp)
+                                        Text("Takedown", fontSize = 11.sp, color = Color.White)
                                     }
                                 }
                             }
@@ -513,11 +513,11 @@ fun AdminAndUssdScreen(
                                             if (tx.escrowStatus == EscrowStatus.HELD_IN_ESCROW) {
                                                 Button(
                                                     onClick = { onReleaseEscrow(tx.id) },
-                                                    colors = ButtonDefaults.buttonColors(containerColor = BrandGreen),
+                                                    colors = ButtonDefaults.buttonColors(containerColor = BrandGreen, contentColor = Color.White),
                                                     shape = RoundedCornerShape(6.dp),
                                                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp)
                                                 ) {
-                                                    Text("SuperAdmin Release", fontSize = 10.sp)
+                                                    Text("SuperAdmin Release", fontSize = 10.sp, color = Color.White)
                                                 }
                                             }
                                         }

@@ -248,18 +248,19 @@ fun EscrowPaymentsScreen(
                         ) {
                             Button(
                                 onClick = { onReleaseEscrowClick(tx.id) },
-                                colors = ButtonDefaults.buttonColors(containerColor = GreenVerified),
+                                colors = ButtonDefaults.buttonColors(containerColor = GreenVerified, contentColor = Color.White),
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier
                                     .weight(1f)
                                     .testTag("release_escrow_button_${tx.id}")
                             ) {
-                                Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(14.dp))
+                                Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(14.dp), tint = Color.White)
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = if (isSwahili) "Toa Pesa kwa Mfanyakazi" else "Release Escrow",
                                     fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
                                 )
                             }
 
@@ -309,9 +310,9 @@ fun EscrowPaymentsScreen(
                         onDisputeClick(txId)
                         showDisputeDialogForId = null
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = RedWarning)
+                    colors = ButtonDefaults.buttonColors(containerColor = RedWarning, contentColor = Color.White)
                 ) {
-                    Text(if (isSwahili) "Wasilisha Mgogoro" else "Submit Dispute")
+                    Text(if (isSwahili) "Wasilisha Mgogoro" else "Submit Dispute", color = Color.White)
                 }
             },
             dismissButton = {

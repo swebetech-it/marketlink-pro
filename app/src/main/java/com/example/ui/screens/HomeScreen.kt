@@ -58,6 +58,7 @@ fun HomeScreen(
     var showHeatmap by remember { mutableStateOf(false) }
     var isSyncing by remember { mutableStateOf(false) }
     var syncMessage by remember { mutableStateOf<String?>(null) }
+    var filterOnlyMyMatches by remember { mutableStateOf(false) }
 
     Scaffold(
         floatingActionButton = {
@@ -188,19 +189,55 @@ fun HomeScreen(
                     ) {
                         item {
                             FilterChip(
-                                selected = selectedCategory == null,
-                                onClick = { onCategorySelect(null) },
-                                label = { Text(if (isSwahili) "Zote" else "All Opportunities", fontSize = 11.sp) },
+                                selected = selectedCategory == null && !filterOnlyMyMatches,
+                                onClick = {
+                                    onCategorySelect(null)
+                                    filterOnlyMyMatches = false
+                                },
+                                label = { Text(if (isSwahili) "Fursa Zote" else "All Opportunities", fontSize = 11.sp) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = EmeraldPrimary,
                                     selectedLabelColor = Color.White
                                 )
                             )
                         }
+                        item {
+                            FilterChip(
+                                selected = filterOnlyMyMatches,
+                                onClick = {
+                                    filterOnlyMyMatches = !filterOnlyMyMatches
+                                    if (filterOnlyMyMatches) onCategorySelect(null)
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.AutoAwesome,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(13.dp),
+                                        tint = if (filterOnlyMyMatches) EmeraldDark else GoldAccent
+                                    )
+                                },
+                                label = {
+                                    Text(
+                                        if (isSwahili) "Zinazonifaa (AI Matched)" else "My Career Matches",
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = GoldAccent,
+                                    selectedLabelColor = EmeraldDark,
+                                    containerColor = EmeraldDark.copy(alpha = 0.15f),
+                                    labelColor = EmeraldPrimary
+                                )
+                            )
+                        }
                         items(OpportunityCategory.values()) { cat ->
                             FilterChip(
-                                selected = selectedCategory == cat,
-                                onClick = { onCategorySelect(if (selectedCategory == cat) null else cat) },
+                                selected = selectedCategory == cat && !filterOnlyMyMatches,
+                                onClick = {
+                                    filterOnlyMyMatches = false
+                                    onCategorySelect(if (selectedCategory == cat) null else cat)
+                                },
                                 label = { Text(if (isSwahili) cat.labelSw else cat.labelEn, fontSize = 11.sp) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = EmeraldPrimary,
@@ -315,6 +352,8 @@ fun HomeScreen(
                 }
             }
 
+            val displayListings = if (filterOnlyMyMatches) listings.filter { it.matchScore >= 60 } else listings
+
             // Listings Header Row
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -325,7 +364,7 @@ fun HomeScreen(
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "${listings.size} ${if (isSwahili) "Fursa Zilizopatikana" else "Active Opportunities"}",
+                                text = "${displayListings.size} ${if (isSwahili) "Fursa Zilizopatikana" else "Active Opportunities"}",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 15.sp,
                                 color = SlateTextPrimary
@@ -339,48 +378,34 @@ fun HomeScreen(
                                         onTriggerSync { success ->
                                             isSyncing = false
                                             syncMessage = if (success)
-                                                (if (isSwahili) "✓ Data zimesawazishwa kikamilifu!" else "✓ Successfully synced from backend!")
+                                                (if (isSwahili) "✓ Fursa zimesasishwa kikamilifu!" else "✓ Opportunities refreshed successfully!")
                                             else
-                                                (if (isSwahili) "✗ Imeshindwa kuunganisha kwenye seva." else "✗ Failed to reach server. Check IP.")
+                                                (if (isSwahili) "✗ Hitilafu ya mtandao. Tafadhali jaribu tena." else "✗ Network error. Please try again.")
                                         }
                                     },
                                     modifier = Modifier.size(28.dp)
                                 ) {
                                     if (isSyncing) {
-                                        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = BrandBlue)
+                                        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = EmeraldPrimary)
                                     } else {
-                                        Icon(Icons.Default.Sync, contentDescription = "Sync", tint = BrandBlue, modifier = Modifier.size(18.dp))
+                                        Icon(Icons.Default.Refresh, contentDescription = "Refresh", tint = EmeraldPrimary, modifier = Modifier.size(18.dp))
                                     }
                                 }
                             }
                         }
 
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            if (onOpenServerSettings != null) {
-                                TextButton(
-                                    onClick = onOpenServerSettings,
-                                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp),
-                                    modifier = Modifier.height(28.dp)
-                                ) {
-                                    Icon(Icons.Default.Dns, contentDescription = null, modifier = Modifier.size(13.dp), tint = BrandLightBlue)
-                                    Spacer(modifier = Modifier.width(3.dp))
-                                    Text("IP", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = BrandLightBlue)
-                                }
-                            }
-
-                            if (selectedRegion != "All Regions") {
-                                Surface(
-                                    shape = RoundedCornerShape(12.dp),
-                                    color = EmeraldPrimary.copy(alpha = 0.1f)
-                                ) {
-                                    Text(
-                                        text = selectedRegion,
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = EmeraldPrimary,
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
-                                    )
-                                }
+                        if (selectedRegion != "All Regions") {
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = EmeraldPrimary.copy(alpha = 0.1f)
+                            ) {
+                                Text(
+                                    text = selectedRegion,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = EmeraldPrimary,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                )
                             }
                         }
                     }
@@ -397,7 +422,7 @@ fun HomeScreen(
             }
 
             // Listings Feed
-            if (listings.isEmpty()) {
+            if (displayListings.isEmpty()) {
                 item {
                     Card(
                         shape = RoundedCornerShape(12.dp),
@@ -410,76 +435,64 @@ fun HomeScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(20.dp)
+                                .padding(24.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Default.CloudSync,
+                                imageVector = Icons.Default.WorkOutline,
                                 contentDescription = null,
-                                tint = BrandBlue,
+                                tint = EmeraldPrimary,
                                 modifier = Modifier.size(44.dp)
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                text = if (isSwahili) "Hakuna fursa zilizopatikana kwenye hifadhi ya simu." else "No opportunities found in local cache.",
+                                text = if (filterOnlyMyMatches)
+                                    (if (isSwahili) "Hakuna fursa zinazoendana moja kwa moja na taaluma yako kwa sasa." else "No opportunities matching your exact career profile at this time.")
+                                else
+                                    (if (isSwahili) "Hakuna fursa zilizopatikana kwa sasa." else "No opportunities found at this time."),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
-                                color = SlateTextPrimary
+                                color = SlateTextPrimary,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(6.dp))
                             Text(
-                                text = if (isSwahili)
-                                    "Bofya kitufe cha chini kusawazisha na kupakua kazi na fursa 13+ kutoka kwenye seva ya Laravel ya kompyuta yako."
+                                text = if (filterOnlyMyMatches)
+                                    (if (isSwahili) "Bofya 'Fursa Zote' kuona kazi zote au bofya kitufe cha chini kupakia upya." else "Tap 'All Opportunities' to explore the full market feed or refresh below.")
                                 else
-                                    "Tap below to pull and sync all 13+ active opportunities directly from your Laravel backend server.",
+                                    (if (isSwahili) "Tafadhali jaribu kubadilisha vigezo au bofya kitufe cha chini kupakia upya." else "Try adjusting your filters or tap below to refresh the feed."),
                                 fontSize = 12.sp,
                                 color = SlateTextSecondary,
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
 
-                            Spacer(modifier = Modifier.height(14.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                if (onTriggerSync != null) {
-                                    Button(
-                                        onClick = {
-                                            isSyncing = true
-                                            syncMessage = null
-                                            onTriggerSync { success ->
-                                                isSyncing = false
-                                                syncMessage = if (success)
-                                                    (if (isSwahili) "✓ Imesawazishwa kikamilifu!" else "✓ Successfully synced!")
-                                                else
-                                                    (if (isSwahili) "✗ Imeshindwa. Hakikisha URL ya seva ni sahihi." else "✗ Failed. Check server URL.")
-                                            }
-                                        },
-                                        enabled = !isSyncing,
-                                        colors = ButtonDefaults.buttonColors(containerColor = BrandBlue),
-                                        shape = RoundedCornerShape(8.dp),
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        if (isSyncing) {
-                                            CircularProgressIndicator(color = Color.White, modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
-                                            Spacer(modifier = Modifier.width(6.dp))
-                                            Text(if (isSwahili) "Inapakua..." else "Syncing...", fontSize = 12.sp)
-                                        } else {
-                                            Icon(Icons.Default.Sync, contentDescription = null, modifier = Modifier.size(16.dp))
-                                            Spacer(modifier = Modifier.width(4.dp))
-                                            Text(if (isSwahili) "Sawazisha na Seva" else "Sync from Backend", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            if (onTriggerSync != null) {
+                                Button(
+                                    onClick = {
+                                        isSyncing = true
+                                        syncMessage = null
+                                        onTriggerSync { success ->
+                                            isSyncing = false
+                                            syncMessage = if (success)
+                                                (if (isSwahili) "✓ Fursa zimesasishwa kikamilifu!" else "✓ Feed refreshed!")
+                                            else
+                                                (if (isSwahili) "✗ Hitilafu ya mtandao. Jaribu tena." else "✗ Network error. Try again.")
                                         }
-                                    }
-                                }
-
-                                if (onOpenServerSettings != null) {
-                                    OutlinedButton(
-                                        onClick = onOpenServerSettings,
-                                        shape = RoundedCornerShape(8.dp)
-                                    ) {
-                                        Icon(Icons.Default.Settings, contentDescription = null, modifier = Modifier.size(15.dp))
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text(if (isSwahili) "Seva IP" else "Server IP", fontSize = 12.sp)
+                                    },
+                                    enabled = !isSyncing,
+                                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White),
+                                    shape = RoundedCornerShape(10.dp),
+                                    modifier = Modifier.fillMaxWidth(0.7f)
+                                ) {
+                                    if (isSyncing) {
+                                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(if (isSwahili) "Inapakia..." else "Refreshing...", fontSize = 12.sp, color = Color.White)
+                                    } else {
+                                        Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(if (isSwahili) "Pakia Upya Fursa" else "Refresh Opportunities", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
                                     }
                                 }
                             }
@@ -487,7 +500,7 @@ fun HomeScreen(
                     }
                 }
             } else {
-                items(listings, key = { it.id }) { listing ->
+                items(displayListings, key = { it.id }) { listing ->
                     ListingCard(
                         listing = listing,
                         isSwahili = isSwahili,

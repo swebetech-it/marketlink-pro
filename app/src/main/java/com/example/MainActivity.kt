@@ -47,7 +47,6 @@ class MainActivity : ComponentActivity() {
                 var activeListingDetail by remember { mutableStateOf<Listing?>(null) }
                 var showCreateDialog by remember { mutableStateOf(false) }
                 var showRegisterDialog by remember { mutableStateOf(false) }
-                var showServerConfigDialog by remember { mutableStateOf(false) }
                 var showNotificationSheet by remember { mutableStateOf(false) }
                 var showLogoutDialog by remember { mutableStateOf(false) }
 
@@ -98,7 +97,6 @@ class MainActivity : ComponentActivity() {
                             onRoleSelected = { viewModel.setUserRole(it) },
                             onLanguageToggle = { viewModel.setLanguage(it) },
                             onNotificationClick = { showNotificationSheet = true },
-                            onServerSettingsClick = { showServerConfigDialog = true },
                             onOpenRegister = { showRegisterDialog = true },
                             onLogoutClick = { showLogoutDialog = true }
                         )
@@ -178,8 +176,7 @@ class MainActivity : ComponentActivity() {
                                         onCreateListingClick = { showCreateDialog = true },
                                         onTriggerSync = { onComplete ->
                                             viewModel.triggerManualSync(onComplete)
-                                        },
-                                        onOpenServerSettings = { showServerConfigDialog = true }
+                                        }
                                     )
                                 }
 
@@ -319,18 +316,6 @@ class MainActivity : ComponentActivity() {
                                         password = password,
                                         onResult = onResult
                                     )
-                                }
-                            )
-                        }
-
-                        // Backend Server Settings & Live Sync Modal
-                        if (showServerConfigDialog) {
-                            com.example.ui.components.BackendServerConfigDialog(
-                                isSwahili = uiState.isSwahili,
-                                currentUrl = com.example.data.remote.ApiClient.baseUrl,
-                                onDismiss = { showServerConfigDialog = false },
-                                onSaveAndSync = { newUrl, onComplete ->
-                                    viewModel.updateServerBaseUrl(newUrl, onComplete)
                                 }
                             )
                         }

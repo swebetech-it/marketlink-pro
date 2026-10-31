@@ -232,9 +232,9 @@ fun AdminPortalScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = if (isSwahili)
-                            "Ingiza URL ya Laravel backend (k.m. http://10.0.2.2:8000/admin kwa emulator, au IP ya kompyuta yako):"
+                            "Weka anuani ya tovuti ya usimamizi ya Linkora (Linkora Web Admin):"
                         else
-                            "Enter Laravel Web Portal URL (e.g. http://10.0.2.2:8000/admin for emulator, or your local LAN IP):",
+                            "Enter the Linkora Web Portal URL:",
                         fontSize = 12.sp,
                         color = SlateTextSecondary
                     )
@@ -251,20 +251,7 @@ fun AdminPortalScreen(
                     ) {
                         SuggestionChip(
                             onClick = { customUrlInput = "https://linkora.co.tz/admin" },
-                            label = { Text("Linkora Portal (linkora.co.tz)", fontSize = 10.sp) }
-                        )
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.padding(top = 2.dp)
-                    ) {
-                        SuggestionChip(
-                            onClick = { customUrlInput = "http://10.0.2.2:8000/admin" },
-                            label = { Text("Emulator (10.0.2.2)", fontSize = 10.sp) }
-                        )
-                        SuggestionChip(
-                            onClick = { customUrlInput = "http://localhost:8000/admin" },
-                            label = { Text("Localhost", fontSize = 10.sp) }
+                            label = { Text("Linkora Portal (linkora.co.tz/admin)", fontSize = 10.sp, fontWeight = FontWeight.Bold) }
                         )
                     }
                 }
@@ -276,7 +263,7 @@ fun AdminPortalScreen(
                         showUrlEditDialog = false
                         webViewInstance?.loadUrl(currentUrl)
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White)
                 ) {
                     Text(if (isSwahili) "Hifadhi & Fungua" else "Save & Load")
                 }

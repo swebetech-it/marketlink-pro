@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -349,11 +350,11 @@ fun CreateListingDialog(
                         )
                     }
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.testTag("submit_listing_button")
             ) {
-                Text(if (isSwahili) "Tangaza Kazi (Wafikie Wafanyakazi)" else "Publish & Dispatch Match")
+                Text(if (isSwahili) "Tangaza Kazi (Wafikie Wafanyakazi)" else "Publish & Dispatch Match", color = Color.White)
             }
         },
         dismissButton = {

@@ -332,34 +332,36 @@ fun ListingDetailScreen(
             ) {
                 Button(
                     onClick = { showApplyDialog = true },
-                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White),
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .weight(1f)
                         .testTag("apply_now_button")
                 ) {
-                    Icon(Icons.Default.Send, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Icon(Icons.Default.Send, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = if (isSwahili) "Omba Fursa Hii" else "Apply to Listing",
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
                     )
                 }
 
                 if (listing.isEscrowRequired) {
                     Button(
                         onClick = { showDepositDialog = true },
-                        colors = ButtonDefaults.buttonColors(containerColor = BlueEscrow),
+                        colors = ButtonDefaults.buttonColors(containerColor = BlueEscrow, contentColor = Color.White),
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier
                             .weight(1f)
                             .testTag("deposit_escrow_button")
                     ) {
-                        Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = if (isSwahili) "Weka Escrow" else "Lock Escrow",
-                            fontWeight = FontWeight.Bold
+                            text = if (isSwahili) "Amana ya Escrow" else "Lock Escrow",
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
                         )
                     }
                 }
@@ -430,10 +432,10 @@ fun ListingDetailScreen(
                             showApplyDialog = false
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White),
                     modifier = Modifier.testTag("submit_application_button")
                 ) {
-                    Text(if (isSwahili) "Tuma Ombi" else "Submit Pitch")
+                    Text(if (isSwahili) "Tuma Ombi" else "Submit Pitch", color = Color.White)
                 }
             },
             dismissButton = {
@@ -504,10 +506,10 @@ fun ListingDetailScreen(
                         onDepositEscrowClick(selectedPaymentMethod)
                         showDepositDialog = false
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = BlueEscrow),
+                    colors = ButtonDefaults.buttonColors(containerColor = BlueEscrow, contentColor = Color.White),
                     modifier = Modifier.testTag("confirm_deposit_button")
                 ) {
-                    Text(if (isSwahili) "Thibitisha Amana" else "Confirm Escrow Deposit")
+                    Text(if (isSwahili) "Thibitisha Amana" else "Confirm Escrow Deposit", color = Color.White)
                 }
             },
             dismissButton = {

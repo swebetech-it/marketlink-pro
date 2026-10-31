@@ -209,11 +209,11 @@ fun TrainingAndFinancialScreen(
                             } else {
                                 Button(
                                     onClick = { /* enroll */ },
-                                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White),
                                     shape = RoundedCornerShape(8.dp),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Text(if (isSwahili) "Jiunge na Mafunzo" else "Enroll in Course", fontSize = 12.sp)
+                                    Text(if (isSwahili) "Jiunge na Mafunzo" else "Enroll in Course", fontSize = 12.sp, color = Color.White)
                                 }
                             }
                         }

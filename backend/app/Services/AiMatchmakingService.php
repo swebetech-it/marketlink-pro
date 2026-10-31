@@ -186,48 +186,42 @@ class AiMatchmakingService
      */
     public function calculateCandidateMatchScore(User $candidate, Listing $listing, ?string $targetProfession): int
     {
+        $targetProf = $targetProfession ?? $listing->target_profession ?? $this->detectProfessionCategory($listing->title . ' ' . $listing->description);
+        $candProf = $candidate->primary_profession;
+
+        // If candidate has no primary_profession set, infer from their skills
+        if (empty($candProf)) {
+            $candSkillsStr = strtolower(implode(' ', (array)$candidate->skills) . ' ' . $candidate->bio);
+            $candProf = $this->detectProfessionCategory($candSkillsStr);
+        }
+
+        // Domain-level incompatibility checks:
+        // An IT/Software engineer, Accountant, or Healthcare professional should NOT match cleaning or manual farm gigs.
+        $techProfessions = ['IT_SOFTWARE', 'ACCOUNTING_FINANCE', 'HEALTHCARE', 'EDUCATION_TEACHING'];
+        $manualSanitationProfessions = ['CLEANING_SANITATION', 'DOMESTIC_WORK', 'AGRI_LABOR', 'CASUAL_GIG'];
+
+        $isCandidateTech = in_array($candProf, $techProfessions);
+        $isListingManual = in_array($targetProf, $manualSanitationProfessions) || in_array($listing->category, ['CASUAL_GIG', 'AGRI_LABOR']);
+
+        if ($isCandidateTech && $isListingManual) {
+            // Hard cap for incompatible domains (e.g. IT Engineer vs Cleaning / Harvesting)
+            return 12;
+        }
+
+        if (in_array($candProf, ['CLEANING_SANITATION', 'DOMESTIC_WORK']) && in_array($targetProf, ['IT_SOFTWARE', 'ACCOUNTING_FINANCE'])) {
+            return 10;
+        }
+
         $score = 0;
 
-        // 1. Location Proximity Score (Max 40 points)
-        $candLoc = strtolower($candidate->location . ' ' . ($candidate->district ?? ''));
-        $listLoc = strtolower($listing->location . ' ' . ($listing->district ?? ''));
-
-        $regions = ['mbeya', 'morogoro', 'dar es salaam', 'dodoma', 'arusha', 'mwanza', 'iringa', 'songwe', 'tanga', 'kilimanjaro', 'zanzibar'];
-        $locationMatched = false;
-
-        foreach ($regions as $region) {
-            if (str_contains($candLoc, $region) && str_contains($listLoc, $region)) {
-                $score += 35;
-                $locationMatched = true;
-                break;
-            }
-        }
-
-        // Sub-district or specific town match bonus (e.g. Uyole, Mwanjelwa, Kinondoni, Kilombero)
-        if ($locationMatched) {
-            $candWords = array_filter(explode(' ', preg_replace('/[^a-z0-9]/', ' ', $candLoc)));
-            foreach ($candWords as $w) {
-                if (strlen($w) > 4 && str_contains($listLoc, $w)) {
-                    $score += 5; // local proximity bonus
-                    break;
-                }
-            }
-        }
-
-        // If location completely differs across regions (e.g., Mbeya vs Mwanza), heavily penalize physical jobs
-        if (!$locationMatched && !str_contains($listLoc, 'tanzania')) {
-            // Low location score
-            $score += 5;
-        }
-
-        // 2. Profession / Category Score (Max 40 points)
-        if (!empty($targetProfession)) {
-            if ($candidate->primary_profession === $targetProfession) {
-                $score += 40; // Direct primary profession match!
+        // 1. Profession Alignment (Max 60 points)
+        if (!empty($targetProf)) {
+            if ($candProf === $targetProf) {
+                $score += 60; // Direct primary profession match!
             } else {
-                // Check if candidate's skills or bio contain taxonomy keywords
+                // Check if candidate's skills or bio contain taxonomy keywords for this profession
                 $candSkillsStr = strtolower(implode(' ', (array)$candidate->skills) . ' ' . $candidate->bio);
-                $keywords = $this->professionTaxonomy[$targetProfession]['keywords'] ?? [];
+                $keywords = $this->professionTaxonomy[$targetProf]['keywords'] ?? [];
                 $keywordHits = 0;
                 foreach ($keywords as $kw) {
                     if (str_contains($candSkillsStr, strtolower($kw))) {
@@ -235,12 +229,14 @@ class AiMatchmakingService
                     }
                 }
                 if ($keywordHits > 0) {
-                    $score += min(35, 20 + ($keywordHits * 5));
+                    $score += min(50, 25 + ($keywordHits * 8));
                 }
             }
+        } else {
+            $score += 20;
         }
 
-        // 3. Required Skills Overlap Score (Max 20 points)
+        // 2. Required Skills Overlap (Max 25 points)
         $reqSkills = (array)($listing->required_skills ?? []);
         $candSkills = (array)($candidate->skills ?? []);
         $overlapCount = 0;
@@ -255,12 +251,28 @@ class AiMatchmakingService
         }
 
         if (count($reqSkills) > 0) {
-            $score += (int)round(($overlapCount / count($reqSkills)) * 20);
+            $score += (int)round(($overlapCount / count($reqSkills)) * 25);
         } else {
             $score += 10;
         }
 
-        return min(100, $score);
+        // 3. Location Proximity (Max 15 points)
+        $candLoc = strtolower($candidate->location . ' ' . ($candidate->district ?? ''));
+        $listLoc = strtolower($listing->location . ' ' . ($listing->district ?? ''));
+
+        if (str_contains($listLoc, 'remote') || str_contains($listLoc, 'tanzania')) {
+            $score += 15;
+        } else {
+            $regions = ['mbeya', 'morogoro', 'dar es salaam', 'dodoma', 'arusha', 'mwanza', 'iringa', 'songwe', 'tanga', 'kilimanjaro', 'zanzibar'];
+            foreach ($regions as $region) {
+                if (str_contains($candLoc, $region) && str_contains($listLoc, $region)) {
+                    $score += 15;
+                    break;
+                }
+            }
+        }
+
+        return max(15, min(98, $score));
     }
 
     /**

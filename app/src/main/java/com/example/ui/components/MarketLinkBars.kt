@@ -194,19 +194,7 @@ fun MarketLinkTopBar(
                     .padding(end = 2.dp)
             )
 
-            // Server Settings & Live Sync Icon Button
-            if (onServerSettingsClick != null) {
-                IconButton(
-                    onClick = onServerSettingsClick,
-                    modifier = Modifier.testTag("server_settings_top_button")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CloudSync,
-                        contentDescription = "Server Settings & Sync",
-                        tint = BrandLightBlue
-                    )
-                }
-            }
+
 
             // Role Selector Button
             Box {
