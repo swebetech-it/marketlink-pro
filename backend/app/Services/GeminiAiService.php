@@ -46,7 +46,7 @@ class GeminiAiService
             $reqList = implode(', ', $requiredSkills);
 
             $prompt = <<<EOT
-You are MarketLink Pro's AI Matchmaking Engine in Tanzania.
+You are Linkora's AI Matchmaking Engine in Tanzania.
 Evaluate candidate match for opportunity: '{$listingTitle}' requiring [{$reqList}].
 Candidate skills: [{$skillsList}], location: '{$location}'.
 Return JSON format ONLY:
@@ -108,7 +108,7 @@ EOT;
 
         try {
             $prompt = <<<EOT
-MarketLink Pro Scam & Fraud Detector for East Africa.
+Linkora Scam & Fraud Detector for East Africa.
 Analyze listing: Title='{$title}', Compensation='{$compensation}', Description='{$description}'.
 Detect if it contains scam flags like asking applicants to pay money first, unrealistic high daily earnings without skills, or suspicious contacts.
 Return JSON format ONLY:

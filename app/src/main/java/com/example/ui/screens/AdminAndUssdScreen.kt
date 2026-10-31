@@ -629,7 +629,7 @@ fun AdminAndUssdScreen(
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
                                     Text(
-                                        text = "=== MarketLink Pro USSD ===",
+                                        text = "=== Linkora USSD ===",
                                         color = GoldAccent,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold

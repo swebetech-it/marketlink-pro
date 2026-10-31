@@ -94,7 +94,7 @@ class AuthController extends Controller
         NotificationItem::create([
             'id' => 'notif_' . round(microtime(true) * 1000),
             'user_id' => $user->id,
-            'title' => 'Karibu MarketLink Pro!',
+            'title' => 'Karibu Linkora!',
             'body' => $accountType === 'ORGANIZATION'
                 ? "Akaunti ya shirika '{$user->organization_name}' imesajiliwa kikamilifu. Sasa unaweza kutangaza fursa na kuwafikia wafanyakazi wanaokidhi sifa moja kwa moja."
                 : "Akaunti ya {$user->full_name} imesajiliwa kikamilifu. Utaanza kupokea fursa za kazi zinazolingana na ujuzi wako wa {$user->primary_profession}.",

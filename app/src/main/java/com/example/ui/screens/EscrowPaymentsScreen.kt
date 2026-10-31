@@ -68,7 +68,7 @@ fun EscrowPaymentsScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = if (isSwahili) "Amana Zilizohifadhiwa Escrow" else "MarketLink Escrow Vault",
+                                text = if (isSwahili) "Amana Zilizohifadhiwa Escrow" else "Linkora Escrow Vault",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
                                 color = Color.White

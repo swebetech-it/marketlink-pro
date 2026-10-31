@@ -91,7 +91,7 @@ class AdminWebController extends Controller
                 'verification_status' => 'VERIFIED',
                 'nida_number' => 'ADMIN-SYSTEM-01',
                 'location' => 'Mbeya City, Tanzania',
-                'bio' => 'MarketLink Pro System Administrator & Operations Manager',
+                'bio' => 'Linkora System Administrator & Operations Manager',
                 'skills' => ['System Administration', 'KYC Verification', 'Escrow Arbitration'],
                 'rating' => 5.0,
                 'reputation_score' => 1000,

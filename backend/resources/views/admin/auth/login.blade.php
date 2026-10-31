@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperAdmin Login - MarketLink Pro | Swebetech</title>
+    <title>SuperAdmin Login - Linkora | Swebetech</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -34,7 +34,7 @@
         </div>
         
         <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
-            MarketLink <span class="text-emerald-400">Pro</span>
+            Link<span class="text-emerald-400">ora</span>
         </h2>
         <p class="mt-1 text-xs font-semibold uppercase tracking-widest text-emerald-400/90">
             SuperAdmin Management Console
@@ -92,8 +92,8 @@
                             <i class="fa-solid fa-user-shield text-sm"></i>
                         </div>
                         <input type="text" name="login" id="login" required autofocus
-                            value="{{ old('login', 'admin@swebetech.co.tz') }}"
-                            placeholder="admin@swebetech.co.tz au +255 700 000 000"
+                            value="{{ old('login') }}"
+                            placeholder="admin@linkora.co.tz au namba ya simu"
                             class="block w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
                     </div>
                 </div>
@@ -110,8 +110,9 @@
                             <i class="fa-solid fa-lock text-sm"></i>
                         </div>
                         <input type="password" name="password" id="password" required
-                            value="admin123"
+                            value=""
                             placeholder="••••••••"
+                            autocomplete="current-password"
                             class="block w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
                         <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 focus:outline-none">
                             <i id="eyeIcon" class="fa-solid fa-eye text-sm"></i>
@@ -137,20 +138,10 @@
                 </div>
             </form>
 
-            <!-- Quick Access Credentials Helper -->
-            <div class="mt-6 pt-5 border-t border-slate-800 text-center">
-                <p class="text-[11px] text-slate-400 font-medium mb-2">Taarifa za Kuingia za Mfumo (Default SuperAdmin):</p>
-                <div class="inline-flex flex-col sm:flex-row items-center gap-1.5 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] text-slate-300 font-mono">
-                    <span><strong class="text-emerald-400">Email:</strong> admin@swebetech.co.tz</span>
-                    <span class="hidden sm:inline text-slate-600">•</span>
-                    <span><strong class="text-emerald-400">Pass:</strong> admin123</span>
-                </div>
-            </div>
-
         </div>
 
         <div class="mt-8 text-center text-xs text-slate-500 space-y-1">
-            <p>&copy; {{ date('Y') }} Swebetech Company Limited • MarketLink Pro Ecosystem (SRS V1.0)</p>
+            <p>&copy; {{ date('Y') }} Swebetech Company Limited • Linkora Ecosystem (SRS V1.0)</p>
             <p>BRELA No. 579919 • Regional Operations: Mbeya, Tanzania</p>
         </div>
     </div>

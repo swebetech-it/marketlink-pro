@@ -499,7 +499,7 @@ fun AuthScreen(
                                 color = SlateTextPrimary
                             )
                             Text(
-                                text = if (isSwahili) "Sajili maelezo yako na NIDA ID ili kuanza kutumia MarketLink Pro" else "Register your profile with NIDA ID to start using MarketLink Pro",
+                                text = if (isSwahili) "Sajili maelezo yako na NIDA ID ili kuanza kutumia Linkora" else "Register your profile with NIDA ID to start using Linkora",
                                 fontSize = 12.sp,
                                 color = SlateTextSecondary
                             )
@@ -897,7 +897,7 @@ fun AuthScreen(
                                         signUpNida,
                                         signUpLocation,
                                         signUpBio.ifBlank {
-                                            if (signUpAccountType == "ORGANIZATION") "Registered organization employer on MarketLink Pro."
+                                            if (signUpAccountType == "ORGANIZATION") "Registered organization employer on Linkora."
                                             else "Registered worker in $signUpDistrict specializing in $signUpPrimaryProfession."
                                         },
                                         skillsList.ifEmpty { listOf(signUpPrimaryProfession, "Services") },

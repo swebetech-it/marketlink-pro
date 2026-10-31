@@ -472,7 +472,7 @@ fun ListingDetailScreen(
                         text = if (isSwahili)
                             "Pesa zitahifadhiwa kwa usalama hadi utakapothibitisha kukamilika kwa kazi."
                         else
-                            "Funds will be held securely in MarketLink Escrow until work milestone is verified.",
+                            "Funds will be held securely in Linkora Escrow until work milestone is verified.",
                         fontSize = 12.sp,
                         color = SlateTextSecondary
                     )

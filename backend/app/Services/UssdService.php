@@ -27,7 +27,7 @@ class UssdService
 
         if ($text === "") {
             // Level 0: Main Menu
-            $response  = "CON === MarketLink Pro (Swebetech) ===\n";
+            $response  = "CON === Linkora (Swebetech) ===\n";
             $response .= "1. Angalia Fursa za Kazi\n";
             $response .= "2. Salio la Escrow\n";
             $response .= "3. Uhakiki wa NIDA ID\n";

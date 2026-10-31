@@ -53,7 +53,7 @@ fun MarketLinkLogoMark(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "MarketLink Pro Logo Emblem",
+            contentDescription = "Linkora Logo Emblem",
             tint = Color.Unspecified,
             modifier = Modifier.fillMaxSize()
         )
@@ -69,14 +69,11 @@ fun MarketLinkLogoText(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = BrandBlue, fontWeight = FontWeight.ExtraBold)) {
-                        append("Market")
+                    withStyle(SpanStyle(color = Color.White, fontWeight = FontWeight.ExtraBold)) {
+                        append("Link")
                     }
                     withStyle(SpanStyle(color = BrandGreen, fontWeight = FontWeight.ExtraBold)) {
-                        append("Link ")
-                    }
-                    withStyle(SpanStyle(color = BrandOrange, fontWeight = FontWeight.Black)) {
-                        append("PRO")
+                        append("ora")
                     }
                 },
                 fontSize = fontSize.sp,

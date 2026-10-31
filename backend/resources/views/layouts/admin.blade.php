@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin Portal') - MarketLink Pro | Swebetech</title>
+    <title>@yield('title', 'Admin Portal') - Linkora | Swebetech</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -36,7 +36,7 @@
                         <i class="fa-solid fa-link text-white text-lg"></i>
                     </div>
                     <div>
-                        <span class="text-lg font-black tracking-tight text-white">MarketLink <span class="text-emerald-400">Pro</span></span>
+                        <span class="text-lg font-black tracking-tight text-white">Link<span class="text-emerald-400">ora</span></span>
                         <span class="block text-[10px] uppercase font-semibold tracking-wider text-slate-400">Swebetech Company Ltd • Mbeya, Tanzania</span>
                     </div>
                 </div>
@@ -119,7 +119,7 @@
 
     <!-- Footer -->
     <footer class="bg-slate-900 border-t border-slate-800 py-6 mt-12 text-center text-xs text-slate-500">
-        <p>&copy; {{ date('Y') }} Swebetech Company Limited • MarketLink Pro Ecosystem (SRS V1.0) • BRELA No. 579919 • Mbeya, Tanzania</p>
+        <p>&copy; {{ date('Y') }} Swebetech Company Limited • Linkora Ecosystem (SRS V1.0) • BRELA No. 579919 • Mbeya, Tanzania</p>
     </footer>
 
 </body>

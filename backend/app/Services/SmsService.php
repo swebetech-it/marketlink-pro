@@ -36,7 +36,7 @@ class SmsService
                 'username' => $this->username,
                 'to' => $toPhoneNumber,
                 'message' => $message,
-                'from' => 'MarketLink',
+                'from' => 'Linkora',
             ]);
 
             return $response->successful();

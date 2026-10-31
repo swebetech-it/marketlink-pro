@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
                 'verification_status' => 'VERIFIED',
                 'nida_number' => 'ADMIN-SYS-01',
                 'location' => 'Mbeya City, Tanzania',
-                'bio' => 'MarketLink Pro National System Operations & Verification Center',
+                'bio' => 'Linkora National System Operations & Verification Center',
                 'skills' => ['System Administration', 'KYC Verification', 'Escrow Arbitration'],
                 'rating' => 5.0,
                 'reputation_score' => 1000,

@@ -175,7 +175,7 @@ class MarketLinkRepository(private val db: MarketLinkDatabase) {
                 db.notificationDao().insertNotification(
                     NotificationItem(
                         id = "n_" + System.currentTimeMillis(),
-                        title = "Welcome to MarketLink Pro!",
+                        title = "Welcome to Linkora!",
                         body = "User account '${remoteProfile.fullName}' successfully registered with NIDA ID ${remoteProfile.nidaNumber}.",
                         channel = "SMS (Africa's Talking)",
                         timestamp = "Just now",

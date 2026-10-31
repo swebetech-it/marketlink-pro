@@ -33,7 +33,7 @@ object GeminiService {
 
         try {
             val prompt = """
-                You are MarketLink Pro's AI Matchmaking Engine in Tanzania.
+                You are Linkora's AI Matchmaking Engine in Tanzania.
                 Evaluate candidate match for opportunity: '$listingTitle' requiring [${listingReqs.joinToString()}].
                 Candidate skills: [${userSkills.joinToString()}], location: '$userLocation'.
                 Return JSON format ONLY:
@@ -91,7 +91,7 @@ object GeminiService {
 
         try {
             val prompt = """
-                MarketLink Pro Scam & Fraud Detector for East Africa.
+                Linkora Scam & Fraud Detector for East Africa.
                 Analyze listing: Title='$title', Compensation='$compensation', Description='$description'.
                 Detect if it contains scam flags like asking applicants to pay money first, unrealistic high daily earnings without skills, or suspicious contacts.
                 Return JSON format ONLY:
@@ -129,7 +129,7 @@ object GeminiService {
                 val cleanJson = text.substringAfter("{").substringBeforeLast("}")
                 val parsed = JSONObject("{$cleanJson}")
                 val isSuspicious = parsed.optBoolean("isSuspicious", false)
-                val reason = parsed.optString("riskReason", "Listing passed MarketLink AI Trust Checks.")
+                val reason = parsed.optString("riskReason", "Listing passed Linkora AI Trust Checks.")
                 return@withContext Pair(isSuspicious, reason)
             }
         } catch (e: Exception) {

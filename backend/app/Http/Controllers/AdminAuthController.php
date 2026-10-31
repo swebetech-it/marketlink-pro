@@ -28,26 +28,17 @@ class AdminAuthController extends Controller
         $loginInput = trim($request->input('login'));
         $passwordInput = $request->input('password');
 
-        // Look up by email or phone
+        // Look up admin by exact email or phone
         $user = User::where('email', $loginInput)
             ->orWhere('phone', $loginInput)
             ->orWhere('phone', '+' . ltrim($loginInput, '+'))
             ->first();
-
-        // Also check if login is 'admin' or 'admin@swebetech.co.tz'
-        if (!$user && ($loginInput === 'admin' || str_contains($loginInput, 'admin'))) {
-            $user = User::where('role', 'ADMIN')->first();
-        }
 
         if ($user && $user->role === 'ADMIN') {
             $passwordMatches = false;
 
             if ($user->password && Hash::check($passwordInput, $user->password)) {
                 $passwordMatches = true;
-            } elseif ($passwordInput === 'admin123' || $passwordInput === 'marketlink2026' || empty($user->password)) {
-                $passwordMatches = true;
-                $user->password = Hash::make($passwordInput);
-                $user->save();
             }
 
             if ($passwordMatches) {

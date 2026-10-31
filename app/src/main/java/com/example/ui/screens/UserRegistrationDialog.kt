@@ -555,7 +555,7 @@ fun UserRegistrationDialog(
                             nidaNumber,
                             location,
                             bio.ifBlank {
-                                if (accountType == "ORGANIZATION") "Registered organization employer on MarketLink Pro."
+                                if (accountType == "ORGANIZATION") "Registered organization employer on Linkora."
                                 else "Registered worker in $district specializing in $primaryProfession."
                             },
                             parsedSkills.ifEmpty { listOf(primaryProfession, "Services") },

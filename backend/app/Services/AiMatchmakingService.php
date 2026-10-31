@@ -138,7 +138,7 @@ class AiMatchmakingService
             // B. Send SMS via Africa's Talking
             if (!empty($candidate->phone)) {
                 $compStr = substr($listing->compensation, 0, 20);
-                $smsMessage = "MarketLink Pro: Habari {$candidate->full_name}, fursa mpya ya '{$listing->title}' ({$listing->location}, {$compStr}) inakufaa kwa {$score}%. Fungua app ya MarketLink Pro kuomba sasa!";
+                $smsMessage = "Linkora: Habari {$candidate->full_name}, fursa mpya ya '{$listing->title}' ({$listing->location}, {$compStr}) inakufaa kwa {$score}%. Fungua app ya Linkora kuomba sasa!";
                 $this->smsService->sendSms($candidate->phone, $smsMessage);
                 $notifiedCount++;
             }
