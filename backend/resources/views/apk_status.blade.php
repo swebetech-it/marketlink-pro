@@ -28,7 +28,7 @@
             </div>
             <p>Ili kufanya APK ipatikane kwa watumiaji, weka faili ya <code class="text-emerald-300 font-mono">linkora.apk</code> katika folda:</p>
             <div class="bg-slate-900 p-2.5 rounded border border-slate-800 font-mono text-emerald-400 text-[11px] break-all">
-                /var/www/linkora/public/downloads/linkora.apk
+                {{ $expected_path ?? public_path('downloads/linkora.apk') }}
             </div>
             <p class="text-slate-400 text-[11px] pt-1">
                 Watumiaji wakibofya "Pakua APK", mfumo utatuma faili hiyo moja kwa moja kwenye simu zao.
