@@ -49,6 +49,9 @@ interface ListingDao {
     @Query("SELECT * FROM listings ORDER BY isFeatured DESC, datePosted DESC")
     fun getAllListings(): Flow<List<Listing>>
 
+    @Query("SELECT * FROM listings WHERE posterId = :posterId ORDER BY datePosted DESC")
+    fun getListingsByPoster(posterId: String): Flow<List<Listing>>
+
     @Query("SELECT * FROM listings WHERE category = :category ORDER BY datePosted DESC")
     fun getListingsByCategory(category: OpportunityCategory): Flow<List<Listing>>
 

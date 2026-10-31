@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin/*',
             'api/*',
         ]);
+        $middleware->append(\App\Http\Middleware\TenantDatabaseMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

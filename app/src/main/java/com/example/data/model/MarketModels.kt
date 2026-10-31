@@ -61,7 +61,10 @@ data class UserProfile(
     val completedGigs: Int = 0,
     val reputationScore: Int = 0, // out of 1000
     val communityVouches: Int = 0,
-    val badges: List<String> = emptyList()
+    val badges: List<String> = emptyList(),
+    val tenantId: String? = null,
+    val tenantDatabase: String? = null,
+    val isolationLevel: String? = "SHARED"
 )
 
 @Entity(tableName = "listings")

@@ -42,6 +42,7 @@
                     <thead class="text-slate-400 border-b border-slate-800 uppercase text-[10px] tracking-wider">
                         <tr>
                             <th class="pb-3">ID & Title</th>
+                            <th class="pb-3">Organization / Poster</th>
                             <th class="pb-3">Category</th>
                             <th class="pb-3">Location</th>
                             <th class="pb-3">Compensation</th>
@@ -56,6 +57,13 @@
                                 <td class="py-3">
                                     <div class="font-bold text-white text-sm">{{ $listing->title }}</div>
                                     <span class="text-[10px] text-slate-500 font-mono">{{ $listing->id }}</span>
+                                </td>
+                                <td class="py-3">
+                                    <div class="font-bold text-emerald-400 text-xs flex items-center gap-1.5">
+                                        <i class="fa-solid fa-building"></i>
+                                        <span>{{ $listing->poster_name ?: 'System Member' }}</span>
+                                    </div>
+                                    <span class="text-[10px] text-slate-500 font-mono">{{ $listing->poster_id }}</span>
                                 </td>
                                 <td class="py-3">
                                     <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-800 text-emerald-400 border border-emerald-500/20">

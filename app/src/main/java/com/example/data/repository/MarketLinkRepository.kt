@@ -68,10 +68,17 @@ class MarketLinkRepository(private val db: MarketLinkDatabase) {
             }
 
             // 4. Sync Transactions
-            val txResponse = ApiClient.apiService.getTransactions()
+            val txResponse = ApiClient.apiService.getTransactions(userId = activeUserId)
             if (txResponse.isSuccessful && txResponse.body()?.data != null) {
                 val txs = txResponse.body()!!.data!!
                 txs.forEach { db.transactionDao().insertTransaction(it) }
+            }
+
+            // 4b. Sync Applications (filtered by backend tenant boundaries)
+            val appsResponse = ApiClient.apiService.getApplications(userId = activeUserId)
+            if (appsResponse.isSuccessful && appsResponse.body()?.data != null) {
+                val apps = appsResponse.body()!!.data!!
+                apps.forEach { db.applicationDao().insertApplication(it) }
             }
 
             // 5. Sync Courses
@@ -239,9 +246,23 @@ class MarketLinkRepository(private val db: MarketLinkDatabase) {
     suspend fun deleteListingByAdmin(listingId: String) {
         db.listingDao().deleteListing(listingId)
         try {
-            ApiClient.apiService.deleteListing(listingId)
+            ApiClient.apiService.deleteListing(listingId = listingId, userId = activeUserId)
         } catch (e: Exception) {
             Log.w("MarketLinkRepo", "Delete listing queued locally: ${e.message}")
+        }
+    }
+
+    suspend fun deleteListing(listingId: String, currentUserId: String? = null): Boolean {
+        db.listingDao().deleteListing(listingId)
+        return try {
+            val resp = ApiClient.apiService.deleteListing(
+                listingId = listingId,
+                userId = currentUserId ?: activeUserId
+            )
+            resp.isSuccessful
+        } catch (e: Exception) {
+            Log.w("MarketLinkRepo", "Delete listing cached locally: ${e.message}")
+            true
         }
     }
 
@@ -249,7 +270,10 @@ class MarketLinkRepository(private val db: MarketLinkDatabase) {
         db.listingDao().insertListing(listing)
         try {
             ApiClient.apiService.createListing(
-                CreateListingRequest(
+                userId = activeUserId ?: listing.posterId,
+                request = CreateListingRequest(
+                    posterId = listing.posterId,
+                    posterName = listing.posterName,
                     title = listing.title,
                     category = listing.category.name,
                     targetProfession = listing.targetProfession,

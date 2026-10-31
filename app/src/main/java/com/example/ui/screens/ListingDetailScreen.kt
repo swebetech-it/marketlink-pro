@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.Listing
 import com.example.data.model.VerificationStatus
+import com.example.ui.components.BrandOrange
 import com.example.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,10 +32,12 @@ fun ListingDetailScreen(
     aiMatchExplanation: String?,
     aiFraudWarning: String?,
     generatedPitchText: String?,
+    isOwner: Boolean = false,
     onBackClick: () -> Unit,
     onGeneratePitch: () -> Unit,
     onApplySubmit: (pitch: String) -> Unit,
-    onDepositEscrowClick: (method: String) -> Unit
+    onDepositEscrowClick: (method: String) -> Unit,
+    onDeleteListingClick: (() -> Unit)? = null
 ) {
     var pitchInput by remember { mutableStateOf("") }
     var showApplyDialog by remember { mutableStateOf(false) }
@@ -325,44 +328,96 @@ fun ListingDetailScreen(
                 }
             }
 
-            // Bottom Action Buttons
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Button(
-                    onClick = { showApplyDialog = true },
-                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier
-                        .weight(1f)
-                        .testTag("apply_now_button")
+            if (isOwner) {
+                // Organization Management Controls
+                Surface(
+                    color = BrandOrange.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(12.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, BrandOrange.copy(alpha = 0.3f)),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(Icons.Default.Send, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = if (isSwahili) "Omba Fursa Hii" else "Apply to Listing",
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Stars, contentDescription = null, tint = BrandOrange, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = if (isSwahili) "Simamia Fursa ya Shirika Lako" else "Manage Your Organization Posting",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                color = BrandOrange
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = if (isSwahili)
+                                "Fursa hii imechapishwa na shirika lako na inalindwa kwenye nafasi yako huru (Multi-Tenant). Unaweza kuifuta au kusimamia maombi."
+                            else
+                                "This opportunity belongs to your organization and is isolated in your private workspace. You can review applicants or delete it.",
+                            fontSize = 12.sp,
+                            color = SlateTextSecondary
+                        )
 
-                if (listing.isEscrowRequired) {
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            if (onDeleteListingClick != null) {
+                                Button(
+                                    onClick = onDeleteListingClick,
+                                    colors = ButtonDefaults.buttonColors(containerColor = RedWarning, contentColor = Color.White),
+                                    shape = RoundedCornerShape(10.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(if (isSwahili) "Ondoa / Futa Fursa" else "Delete Opportunity", fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Bottom Action Buttons for Job Seekers / Applicants
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
                     Button(
-                        onClick = { showDepositDialog = true },
-                        colors = ButtonDefaults.buttonColors(containerColor = BlueEscrow, contentColor = Color.White),
+                        onClick = { showApplyDialog = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White),
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier
                             .weight(1f)
-                            .testTag("deposit_escrow_button")
+                            .testTag("apply_now_button")
                     ) {
-                        Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
+                        Icon(Icons.Default.Send, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = if (isSwahili) "Amana ya Escrow" else "Lock Escrow",
+                            text = if (isSwahili) "Omba Fursa Hii" else "Apply to Listing",
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
+                    }
+
+                    if (listing.isEscrowRequired) {
+                        Button(
+                            onClick = { showDepositDialog = true },
+                            colors = ButtonDefaults.buttonColors(containerColor = BlueEscrow, contentColor = Color.White),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier
+                                .weight(1f)
+                                .testTag("deposit_escrow_button")
+                        ) {
+                            Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = if (isSwahili) "Amana ya Escrow" else "Lock Escrow",
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
                     }
                 }
             }

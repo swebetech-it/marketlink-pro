@@ -117,6 +117,9 @@ class MainActivity : ComponentActivity() {
                         val detail = activeListingDetail
 
                         if (detail != null) {
+                            val isOwner = detail.posterId == currentProfile.id ||
+                                (currentProfile.organizationName.isNotBlank() && detail.posterName.equals(currentProfile.organizationName, ignoreCase = true))
+
                             ListingDetailScreen(
                                 listing = detail,
                                 isSwahili = uiState.isSwahili,
@@ -125,6 +128,7 @@ class MainActivity : ComponentActivity() {
                                 aiMatchExplanation = uiState.aiMatchExplanation,
                                 aiFraudWarning = uiState.aiFraudWarning,
                                 generatedPitchText = uiState.generatedPitchText,
+                                isOwner = isOwner,
                                 onBackClick = {
                                     activeListingDetail = null
                                     viewModel.selectListingDetail(null)
@@ -149,6 +153,10 @@ class MainActivity : ComponentActivity() {
                                         method = method
                                     )
                                     activeListingDetail = null
+                                },
+                                onDeleteListingClick = {
+                                    viewModel.deleteMyListing(detail.id)
+                                    activeListingDetail = null
                                 }
                             )
                         } else {
@@ -162,6 +170,9 @@ class MainActivity : ComponentActivity() {
                                         selectedCategory = uiState.selectedCategory,
                                         selectedRegion = uiState.selectedRegion,
                                         listings = uiState.listings,
+                                        myOrganizationListings = uiState.myOrganizationListings,
+                                        isViewingPublicDirectory = uiState.isViewingPublicDirectory,
+                                        onTogglePublicDirectory = { viewModel.setViewingPublicDirectory(it) },
                                         onSearchChange = { viewModel.setSearchQuery(it) },
                                         onCategorySelect = { viewModel.setCategoryFilter(it) },
                                         onRegionSelect = { viewModel.setRegionFilter(it) },
@@ -174,6 +185,7 @@ class MainActivity : ComponentActivity() {
                                             viewModel.selectListingDetail(listing)
                                         },
                                         onCreateListingClick = { showCreateDialog = true },
+                                        onDeleteMyListing = { viewModel.deleteMyListing(it) },
                                         onTriggerSync = { onComplete ->
                                             viewModel.triggerManualSync(onComplete)
                                         }

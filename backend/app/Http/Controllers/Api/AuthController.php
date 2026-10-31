@@ -91,6 +91,17 @@ class AuthController extends Controller
             $updateData
         );
 
+        // Database-Per-Tenant Architecture: If registering as an Organization/Employer,
+        // dynamically provision a dedicated isolated physical database for this tenant.
+        if ($accountType === 'ORGANIZATION' || in_array($user->role, ['EMPLOYER', 'FARMER_COOP'])) {
+            $tenantManager = app(\App\Services\TenantManager::class);
+            $tenantManager->createTenantDatabase(
+                $user->id,
+                $user->organization_name ?: $user->full_name,
+                $user->id
+            );
+        }
+
         NotificationItem::create([
             'id' => 'notif_' . round(microtime(true) * 1000),
             'user_id' => $user->id,
@@ -253,6 +264,8 @@ class AuthController extends Controller
 
     protected function formatUserProfile(User $u): array
     {
+        $tenant = \App\Models\Tenant::where('user_id', $u->id)->orWhere('id', $u->id)->first();
+
         return [
             'id' => (string)$u->id,
             'fullName' => $u->full_name,
@@ -276,6 +289,9 @@ class AuthController extends Controller
             'reputationScore' => (int)$u->reputation_score,
             'communityVouches' => (int)$u->community_vouches,
             'badges' => is_array($u->badges) ? $u->badges : [],
+            'tenantId' => $tenant ? $tenant->id : null,
+            'tenantDatabase' => $tenant ? $tenant->database_name : null,
+            'isolationLevel' => $tenant ? 'DATABASE_PER_TENANT' : 'SHARED',
         ];
     }
 }

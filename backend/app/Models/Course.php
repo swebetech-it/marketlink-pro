@@ -9,6 +9,8 @@ class Course extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
+
     public $incrementing = false;
     protected $keyType = 'string';
 

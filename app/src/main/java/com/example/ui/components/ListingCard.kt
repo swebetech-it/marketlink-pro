@@ -25,8 +25,10 @@ import com.example.ui.theme.*
 fun ListingCard(
     listing: Listing,
     isSwahili: Boolean,
+    isOwner: Boolean = false,
     onCardClick: () -> Unit,
-    onQuickApplyClick: () -> Unit
+    onQuickApplyClick: () -> Unit,
+    onDeleteClick: (() -> Unit)? = null
 ) {
     Card(
         shape = RoundedCornerShape(12.dp),
@@ -185,30 +187,54 @@ fun ListingCard(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // Poster & NIDA Verification Mark
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = listing.posterName,
-                    fontSize = 12.sp,
-                    color = SlateTextSecondary
-                )
-                if (listing.posterVerification == VerificationStatus.VERIFIED) {
-                    Spacer(modifier = Modifier.width(4.dp))
+            // Prominent Multi-Tenant Organization Attribution Badge
+            Surface(
+                color = if (isOwner) BrandOrange.copy(alpha = 0.12f) else BrandBlue.copy(alpha = 0.08f),
+                shape = RoundedCornerShape(6.dp),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    if (isOwner) BrandOrange.copy(alpha = 0.4f) else BrandBlue.copy(alpha = 0.25f)
+                ),
+                modifier = Modifier.padding(bottom = 6.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
-                        imageVector = Icons.Default.Verified,
-                        contentDescription = "Verified Employer",
-                        tint = GreenVerified,
-                        modifier = Modifier.size(14.dp)
+                        imageVector = if (isOwner) Icons.Default.Stars else Icons.Default.Apartment,
+                        contentDescription = null,
+                        tint = if (isOwner) BrandOrange else BrandBlue,
+                        modifier = Modifier.size(13.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = if (isOwner)
+                            (if (isSwahili) "★ Fursa ya Shirika Lako" else "★ Your Organization Posting")
+                        else
+                            "${if (isSwahili) "🏢 Shirika" else "🏢 Organization"}: ${listing.posterName}",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (isOwner) BrandOrange else BrandBlue
+                    )
+                    if (listing.posterVerification == VerificationStatus.VERIFIED) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.Verified,
+                            contentDescription = "Verified Employer",
+                            tint = GreenVerified,
+                            modifier = Modifier.size(12.dp)
+                        )
+                    }
+                    Text(
+                        text = " • ★ ${listing.posterRating}",
+                        fontSize = 11.sp,
+                        color = SlateTextSecondary
                     )
                 }
-                Text(
-                    text = " • ★ ${listing.posterRating}",
-                    fontSize = 12.sp,
-                    color = SlateTextSecondary
-                )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             // Location & Compensation Highlight Box
             Row(
@@ -264,7 +290,7 @@ fun ListingCard(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Bottom Footer Row: Escrow Protection Tag + Apply Button
+            // Bottom Footer Row: Escrow Protection Tag + Action Buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -294,19 +320,57 @@ fun ListingCard(
                     )
                 }
 
-                Button(
-                    onClick = onQuickApplyClick,
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                    modifier = Modifier.testTag("apply_button_${listing.id}")
-                ) {
-                    Text(
-                        text = if (isSwahili) "Omba Fursa" else "Apply Now",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+                if (isOwner) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        if (onDeleteClick != null) {
+                            OutlinedButton(
+                                onClick = onDeleteClick,
+                                shape = RoundedCornerShape(8.dp),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = RedWarning),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, RedWarning.copy(alpha = 0.5f)),
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(13.dp), tint = RedWarning)
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Text(
+                                    text = if (isSwahili) "Futa" else "Delete",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = RedWarning
+                                )
+                            }
+                        }
+                        Button(
+                            onClick = onCardClick,
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = BrandBlue, contentColor = Color.White),
+                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+                        ) {
+                            Icon(Icons.Default.ManageAccounts, contentDescription = null, modifier = Modifier.size(13.dp), tint = Color.White)
+                            Spacer(modifier = Modifier.width(3.dp))
+                            Text(
+                                text = if (isSwahili) "Simamia" else "Manage",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+                } else {
+                    Button(
+                        onClick = onQuickApplyClick,
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                        modifier = Modifier.testTag("apply_button_${listing.id}")
+                    ) {
+                        Text(
+                            text = if (isSwahili) "Omba Fursa" else "Apply Now",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
                 }
             }
         }

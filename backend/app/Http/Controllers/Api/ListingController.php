@@ -23,7 +23,28 @@ class ListingController extends Controller
 
     public function index(Request $request)
     {
-        $query = Listing::query()->where('status', 'ACTIVE');
+        // Multi-Tenant Physical Isolation: Check if this is an organization querying their private space
+        $targetUserId = $request->header('X-User-Id') ?? $request->query('for_user_id');
+        $posterId = $request->query('poster_id') ?? $request->query('posterId');
+        $myListingsOnly = $request->boolean('my_listings') || $request->boolean('myListingsOnly');
+
+        $tenantOrgId = $posterId ?: ($myListingsOnly ? $targetUserId : null);
+        $tenantManager = app(\App\Services\TenantManager::class);
+        $tenant = $tenantOrgId ? $tenantManager->findTenantForUser($tenantOrgId) : null;
+
+        if ($tenant && ($myListingsOnly || $posterId)) {
+            // Physical Database Isolation: Switch to this organization's dedicated database
+            $tenantManager->switchToTenant($tenant);
+            $query = Listing::on('tenant')->where('status', 'ACTIVE');
+        } else {
+            // Central National Market Directory
+            $query = Listing::query()->where('status', 'ACTIVE');
+            if ($posterId) {
+                $query->where('poster_id', $posterId);
+            } elseif ($myListingsOnly && $targetUserId) {
+                $query->where('poster_id', $targetUserId);
+            }
+        }
 
         if ($request->filled('category')) {
             $query->where('category', $request->input('category'));
@@ -56,7 +77,6 @@ class ListingController extends Controller
                           ->get();
 
         // If requesting user context is provided, personalize the match score for each listing
-        $targetUserId = $request->header('X-User-Id') ?? $request->query('for_user_id');
         $currentUser = null;
         if ($targetUserId) {
             $currentUser = User::find($targetUserId);
@@ -84,6 +104,8 @@ class ListingController extends Controller
         return response()->json([
             'success' => true,
             'data' => $formatted,
+            'tenant_database' => $tenant && ($myListingsOnly || $posterId) ? $tenant->database_name : null,
+            'isolation_mode' => $tenant && ($myListingsOnly || $posterId) ? 'DATABASE_PER_TENANT' : 'CENTRAL_MARKETPLACE',
         ]);
     }
 
@@ -107,11 +129,17 @@ class ListingController extends Controller
             'equipmentDetails' => 'nullable|string',
         ]);
 
-        $currentUser = User::find($request->input('posterId')) ?? User::first();
-        $posterId = $request->input('posterId') ?? ($currentUser ? $currentUser->id : 'usr_' . Str::random(6));
-        $posterName = $request->input('posterName') ?? ($currentUser ? ($currentUser->organization_name ?? $currentUser->full_name) : 'Platform Member');
-        $posterVerification = $request->input('posterVerification') ?? ($currentUser ? $currentUser->verification_status : 'PENDING');
-        $posterRating = (float)($request->input('posterRating') ?? ($currentUser ? $currentUser->rating : 5.0));
+        $targetUserId = $request->header('X-User-Id') ?? $request->input('posterId');
+        $currentUser = $targetUserId ? User::find($targetUserId) : null;
+        if (!$currentUser && $request->filled('posterId')) {
+            $currentUser = User::find($request->input('posterId'));
+        }
+        $posterId = $currentUser ? $currentUser->id : ($request->input('posterId') ?? 'usr_' . Str::random(6));
+        $posterName = $currentUser
+            ? ($currentUser->organization_name ?: $currentUser->full_name)
+            : ($request->input('posterName') ?? 'Platform Member');
+        $posterVerification = $currentUser ? $currentUser->verification_status : ($request->input('posterVerification') ?? 'PENDING');
+        $posterRating = (float)($currentUser ? $currentUser->rating : ($request->input('posterRating') ?? 5.0));
 
         // 1. Run Gemini AI fraud check
         $fraudAnalysis = $this->aiService->checkFraudRisk(
@@ -131,8 +159,16 @@ class ListingController extends Controller
             ?? $validated['job_type_level']
             ?? 'NON_PROFESSIONAL';
 
-        // 2. Create the Listing in database
-        $listing = Listing::create([
+        // 2. Create the Listing in database (Isolated Tenant DB + Central Discovery)
+        $tenantManager = app(\App\Services\TenantManager::class);
+        $tenant = $tenantManager->findTenantForUser($posterId);
+
+        // Auto-provision if user is an organization/employer
+        if (!$tenant && $currentUser && ($currentUser->account_type === 'ORGANIZATION' || in_array($currentUser->role, ['EMPLOYER', 'FARMER_COOP']))) {
+            $tenant = $tenantManager->createTenantDatabase($posterId, $posterName, $posterId);
+        }
+
+        $listingData = [
             'id' => $listingId,
             'poster_id' => $posterId,
             'poster_name' => $posterName,
@@ -159,7 +195,16 @@ class ListingController extends Controller
             'is_flagged_suspicious' => $fraudAnalysis['isSuspicious'],
             'fraud_risk_score' => $fraudAnalysis['isSuspicious'] ? 85 : 5,
             'status' => 'ACTIVE',
-        ]);
+        ];
+
+        // Save to dedicated tenant database
+        if ($tenant) {
+            $tenantManager->switchToTenant($tenant);
+            Listing::on('tenant')->create($listingData);
+        }
+
+        // Mirror to central database for nationwide discoverability
+        $listing = Listing::create($listingData);
 
         // 3. Trigger Automated Targeted Matchmaking & SMS Dispatch
         $matchReport = $this->matchmakingService->matchAndNotifyCandidates($listing);
@@ -184,11 +229,31 @@ class ListingController extends Controller
     public function destroy(string $id)
     {
         $listing = Listing::findOrFail($id);
+
+        $targetUserId = request()->header('X-User-Id') ?? request()->input('user_id');
+        $currentUser = $targetUserId ? User::find($targetUserId) : null;
+
+        // Security boundary: Only the listing creator or SuperAdmin can delete
+        if ($currentUser && $currentUser->role !== 'ADMIN' && $listing->poster_id !== $currentUser->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Huwezi kufuta fursa ya shirika lingine. Unauthorized: You cannot delete opportunities belonging to another organization.',
+            ], 403);
+        }
+
+        // Delete from isolated tenant database if tenant exists
+        $tenantManager = app(\App\Services\TenantManager::class);
+        $tenant = $tenantManager->findTenantForUser($listing->poster_id);
+        if ($tenant) {
+            $tenantManager->switchToTenant($tenant);
+            Listing::on('tenant')->where('id', $id)->delete();
+        }
+
         $listing->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Listing deleted',
+            'message' => 'Listing deleted successfully',
             'data' => true,
         ]);
     }

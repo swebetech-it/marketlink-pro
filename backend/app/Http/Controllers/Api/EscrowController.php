@@ -16,9 +16,22 @@ class EscrowController extends Controller
         $this->escrowService = $escrowService;
     }
 
-    public function transactions()
+    public function transactions(Request $request)
     {
-        $txs = EscrowTransaction::orderBy('created_at', 'desc')->get()->map(fn($t) => [
+        $targetUserId = $request->header('X-User-Id') ?? $request->query('user_id');
+        $currentUser = $targetUserId ? \App\Models\User::find($targetUserId) : null;
+
+        $query = EscrowTransaction::query();
+
+        if ($currentUser && $currentUser->role !== 'ADMIN') {
+            $name = $currentUser->organization_name ?: $currentUser->full_name;
+            $query->where(function($q) use ($name, $currentUser) {
+                $q->where('payer_name', 'LIKE', "%{$name}%")
+                  ->orWhere('payee_name', 'LIKE', "%{$currentUser->full_name}%");
+            });
+        }
+
+        $txs = $query->orderBy('created_at', 'desc')->get()->map(fn($t) => [
             'id' => (string)$t->id,
             'listingId' => (string)($t->listing_id ?? ''),
             'listingTitle' => $t->listing_title,

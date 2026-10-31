@@ -39,6 +39,8 @@ data class MarketLinkUiState(
     val isSwahili: Boolean = false,
     val selectedRole: UserRole = UserRole.JOB_SEEKER,
     val listings: List<Listing> = emptyList(),
+    val myOrganizationListings: List<Listing> = emptyList(),
+    val isViewingPublicDirectory: Boolean = false,
     val searchQuery: String = "",
     val selectedCategory: OpportunityCategory? = null,
     val selectedRegion: String = "All Regions",
@@ -54,7 +56,10 @@ data class MarketLinkUiState(
     val aiFraudWarning: String? = null,
     val generatedPitchText: String? = null,
     val ussdSimulatedCode: String? = null
-)
+) {
+    val isOrganizationWorkspace: Boolean
+        get() = userProfile.accountType == "ORGANIZATION" || selectedRole in listOf(UserRole.EMPLOYER, UserRole.SERVICE_CLIENT, UserRole.FARMER_COOP)
+}
 
 private data class FilterState(
     val isLoggedIn: Boolean = false,
@@ -64,7 +69,8 @@ private data class FilterState(
     val selectedCategory: OpportunityCategory? = null,
     val selectedRegion: String = "All Regions",
     val selectedListingDetail: Listing? = null,
-    val isAiAnalyzing: Boolean = false
+    val isAiAnalyzing: Boolean = false,
+    val isViewingPublicDirectory: Boolean = false
 )
 
 private data class RepoData(
@@ -94,6 +100,7 @@ class MarketLinkViewModel(application: AndroidApp) : AndroidViewModel(applicatio
     private val _aiFraudWarning = MutableStateFlow<String?>(null)
     private val _generatedPitchText = MutableStateFlow<String?>(null)
     private val _ussdCode = MutableStateFlow<String?>(null)
+    private val _isViewingPublicDirectory = MutableStateFlow(false)
 
     init {
         val database = MarketLinkDatabase.getDatabase(application)
@@ -114,7 +121,8 @@ private data class FilterPartB(
     val selectedCategory: OpportunityCategory?,
     val selectedRegion: String,
     val selectedListingDetail: Listing?,
-    val isAiAnalyzing: Boolean
+    val isAiAnalyzing: Boolean,
+    val isViewingPublicDirectory: Boolean
 )
 
 private data class RepoPartA(
@@ -134,8 +142,8 @@ private data class RepoPartB(
         combine(_isLoggedIn, _isSwahili, _selectedRole, _searchQuery) { isLoggedIn, isSwahili, role, query ->
             FilterPartA(isLoggedIn, isSwahili, role, query)
         },
-        combine(_selectedCategory, _selectedRegion, _selectedListingDetail, _isAiAnalyzing) { cat, reg, det, ai ->
-            FilterPartB(cat, reg, det, ai)
+        combine(_selectedCategory, _selectedRegion, _selectedListingDetail, _isAiAnalyzing, _isViewingPublicDirectory) { cat, reg, det, ai, pub ->
+            FilterPartB(cat, reg, det, ai, pub)
         }
     ) { a, b ->
         FilterState(
@@ -146,7 +154,8 @@ private data class RepoPartB(
             selectedCategory = b.selectedCategory,
             selectedRegion = b.selectedRegion,
             selectedListingDetail = b.selectedListingDetail,
-            isAiAnalyzing = b.isAiAnalyzing
+            isAiAnalyzing = b.isAiAnalyzing,
+            isViewingPublicDirectory = b.isViewingPublicDirectory
         )
     }
 
@@ -228,13 +237,34 @@ private data class RepoPartB(
             }
             .sortedByDescending { it.matchScore }
 
+        val isOrgUser = user.accountType == "ORGANIZATION" ||
+                filter.selectedRole in listOf(UserRole.EMPLOYER, UserRole.SERVICE_CLIENT, UserRole.FARMER_COOP)
+
+        val myOrgListings = scoredListings.filter { item ->
+            item.posterId == user.id ||
+                    (user.organizationName.isNotBlank() && item.posterName.equals(user.organizationName, ignoreCase = true))
+        }
+
+        val activeListingsForFeed = if (isOrgUser && !filter.isViewingPublicDirectory) {
+            myOrgListings.filter { item ->
+                filter.searchQuery.isBlank() ||
+                        item.title.contains(filter.searchQuery, ignoreCase = true) ||
+                        item.description.contains(filter.searchQuery, ignoreCase = true) ||
+                        item.location.contains(filter.searchQuery, ignoreCase = true)
+            }
+        } else {
+            filteredListings
+        }
+
         MarketLinkUiState(
             isLoggedIn = filter.isLoggedIn,
             userProfile = data.userProfile ?: defaultUserProfile,
             allUsers = data.allUsers,
             isSwahili = filter.isSwahili,
             selectedRole = filter.selectedRole,
-            listings = filteredListings,
+            listings = activeListingsForFeed,
+            myOrganizationListings = myOrgListings,
+            isViewingPublicDirectory = filter.isViewingPublicDirectory,
             searchQuery = filter.searchQuery,
             selectedCategory = filter.selectedCategory,
             selectedRegion = filter.selectedRegion,
@@ -388,6 +418,7 @@ private data class RepoPartB(
                 equipmentDetails = equipDetails
             )
             repository.addListing(newListing)
+            _isViewingPublicDirectory.value = false
         }
     }
 
@@ -621,10 +652,22 @@ private data class RepoPartB(
         triggerManualSync(onComplete)
     }
 
+    fun setViewingPublicDirectory(viewPublic: Boolean) {
+        _isViewingPublicDirectory.value = viewPublic
+    }
+
+    fun deleteMyListing(listingId: String) {
+        viewModelScope.launch {
+            val user = repository.userProfile.first() ?: defaultUserProfile
+            repository.deleteListing(listingId, user.id)
+        }
+    }
+
     fun logout() {
         viewModelScope.launch {
             repository.updateProfile(defaultUserProfile)
             _selectedRole.value = UserRole.JOB_SEEKER
+            _isViewingPublicDirectory.value = false
             _isLoggedIn.value = false
         }
     }

@@ -34,6 +34,8 @@ data class NidaVerificationRequest(
 )
 
 data class CreateListingRequest(
+    val posterId: String? = null,
+    val posterName: String? = null,
     val title: String,
     val category: String,
     val targetProfession: String? = null,
@@ -163,6 +165,8 @@ interface MarketLinkApiService {
     @GET("api/listings")
     suspend fun getListings(
         @Header("X-User-Id") userId: String? = null,
+        @Query("poster_id") posterId: String? = null,
+        @Query("my_listings") myListings: Boolean? = null,
         @Query("category") category: String? = null,
         @Query("region") region: String? = null,
         @Query("profession") profession: String? = null,
@@ -170,21 +174,34 @@ interface MarketLinkApiService {
     ): Response<ApiResponse<List<Listing>>>
 
     @POST("api/listings")
-    suspend fun createListing(@Body request: CreateListingRequest): Response<ApiResponse<Listing>>
+    suspend fun createListing(
+        @Header("X-User-Id") userId: String? = null,
+        @Body request: CreateListingRequest
+    ): Response<ApiResponse<Listing>>
 
     @DELETE("api/listings/{id}")
-    suspend fun deleteListing(@Path("id") listingId: String): Response<ApiResponse<Boolean>>
+    suspend fun deleteListing(
+        @Path("id") listingId: String,
+        @Header("X-User-Id") userId: String? = null
+    ): Response<ApiResponse<Boolean>>
 
     // Applications
     @GET("api/applications")
-    suspend fun getApplications(): Response<ApiResponse<List<Application>>>
+    suspend fun getApplications(
+        @Header("X-User-Id") userId: String? = null
+    ): Response<ApiResponse<List<Application>>>
 
     @POST("api/applications")
-    suspend fun applyToListing(@Body request: CreateApplicationRequest): Response<ApiResponse<Application>>
+    suspend fun applyToListing(
+        @Body request: CreateApplicationRequest,
+        @Header("X-User-Id") userId: String? = null
+    ): Response<ApiResponse<Application>>
 
     // Escrow & Transactions
     @GET("api/escrow/transactions")
-    suspend fun getTransactions(): Response<ApiResponse<List<Transaction>>>
+    suspend fun getTransactions(
+        @Header("X-User-Id") userId: String? = null
+    ): Response<ApiResponse<List<Transaction>>>
 
     @POST("api/escrow/deposit")
     suspend fun depositEscrow(@Body request: DepositEscrowRequest): Response<ApiResponse<Transaction>>
