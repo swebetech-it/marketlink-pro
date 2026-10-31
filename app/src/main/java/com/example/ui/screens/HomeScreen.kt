@@ -234,7 +234,7 @@ fun HomeScreen(
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
-                                    text = if (isSwahili) "Injini ya Akili Mnemba (Gemini AI)" else "Gemini AI Smart Matcher",
+                                    text = if (isSwahili) "Injini ya Akili Mnemba (Linkora AI)" else "Linkora AI Smart Matcher",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp,
                                     color = Color.White
@@ -259,9 +259,9 @@ fun HomeScreen(
 
                         Text(
                             text = if (isSwahili)
-                                "Gemini AI inalinganisha ujuzi wako na hali yako ya NIDA na fursa bora zaidi zenye ulinzi wa Escrow."
+                                "Linkora AI inalinganisha ujuzi wako na hali yako ya NIDA na fursa bora zaidi zenye ulinzi wa Escrow."
                             else
-                                "Gemini AI analyzes your verified NIDA identity & skills against active regional demand for highest placement.",
+                                "Linkora AI analyzes your verified NIDA identity & skills against active regional demand for highest placement.",
                             fontSize = 11.sp,
                             color = Color.White.copy(alpha = 0.85f)
                         )

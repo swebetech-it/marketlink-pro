@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Linkora | Jukwaa Mahiri la Ajira za Muda Mfupi na Muda Mrefu Tanzania (AI & Escrow)</title>
-    <meta name="description" content="Linkora inakuunganisha papo hapo na ajira za muda mfupi (vibarua/gigs) na ajira za muda mrefu kote Tanzania. Inaendeshwa na Gemini AI, uthibitisho wa NIDA, na malipo salama ya Escrow kupitia M-Pesa.">
+    <meta name="description" content="Linkora inakuunganisha papo hapo na ajira za muda mfupi (vibarua/gigs) na ajira za muda mrefu kote Tanzania. Inaendeshwa na Linkora AI, uthibitisho wa NIDA, na malipo salama ya Escrow kupitia M-Pesa.">
     <meta name="keywords" content="Linkora, Ajira Tanzania, Vibarua Dar es Salaam, Kazi za Muda Mfupi, Ajira za Muda Mrefu, Mafundi NIDA, Escrow M-Pesa, AI Job Matching Tanzania">
     
     <!-- OpenGraph / Social Sharing -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://linkora.co.tz">
     <meta property="og:title" content="Linkora - Fursa, Ajira na Vibarua kwa Uhakika na Usalama">
-    <meta property="og:description" content="Tafuta au toa ajira za muda mfupi na mrefu Tanzania. Ulinzi wa amana (Escrow), NIDA verification, na Gemini AI matching.">
+    <meta property="og:description" content="Tafuta au toa ajira za muda mfupi na mrefu Tanzania. Ulinzi wa amana (Escrow), NIDA verification, na Linkora AI matching.">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -114,9 +114,9 @@
             <nav class="hidden lg:flex items-center gap-8 text-sm font-medium text-slate-300">
                 <a href="#kuhusu" class="hover:text-brand-400 transition-colors">Kuhusu Linkora</a>
                 <a href="#aina-za-ajira" class="hover:text-brand-400 transition-colors">Ajira & Vibarua</a>
-                <a href="#ai-teknolojia" class="hover:text-brand-400 transition-colors">Gemini AI</a>
+                <a href="#ai-teknolojia" class="hover:text-brand-400 transition-colors">Linkora AI</a>
                 <a href="#escrow-usalama" class="hover:text-brand-400 transition-colors">Escrow (Amana)</a>
-                <a href="#ussd-huduma" class="hover:text-brand-400 transition-colors">Simu za Kitochi (USSD)</a>
+                <a href="#pakua-app" class="hover:text-brand-400 transition-colors">Pakua App</a>
             </nav>
 
             <!-- Actions -->
@@ -154,7 +154,7 @@
                     </h1>
 
                     <p class="text-base sm:text-lg text-slate-300 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
-                        Linkora inawaunganisha waajiri, mafundi, wataalamu na vibarua kote Tanzania. Inaendeshwa na <strong>Google Gemini AI</strong> kwa ulinganifu wa ujuzi, <strong>NIDA</strong> kwa uthibitisho wa utambulisho, na mfumo salama wa <strong>Escrow (M-Pesa)</strong> unaolinda fedha zako mpaka kazi ikamilike.
+                        Linkora inawaunganisha waajiri, mafundi, wataalamu na vibarua kote Tanzania. Inaendeshwa na <strong>Linkora AI</strong> kwa ulinganifu wa ujuzi, <strong>NIDA</strong> kwa uthibitisho wa utambulisho, na mfumo salama wa <strong>Escrow (M-Pesa)</strong> unaolinda fedha zako mpaka kazi ikamilike.
                     </p>
 
                     <!-- CTAs -->
@@ -191,16 +191,16 @@
 
                         <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-left">
                             <div class="flex items-center gap-2 text-teal-400 text-xs font-bold mb-1">
-                                <i class="fa-solid fa-brain"></i> Gemini AI
+                                <i class="fa-solid fa-brain"></i> Linkora AI
                             </div>
                             <div class="text-[11px] text-slate-400">Ulinganishaji mahiri wa ujuzi na nafasi ya kazi</div>
                         </div>
 
                         <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-left">
                             <div class="flex items-center gap-2 text-amber-400 text-xs font-bold mb-1">
-                                <i class="fa-solid fa-mobile-screen"></i> USSD Gateway
+                                <i class="fa-solid fa-bolt"></i> Malipo ya Haraka
                             </div>
-                            <div class="text-[11px] text-slate-400">Inatumika hata bila intaneti kwa simu ya kawaida</div>
+                            <div class="text-[11px] text-slate-400">Fedha zinaingia moja kwa moja kazi ikikamilika</div>
                         </div>
                     </div>
                 </div>
@@ -242,7 +242,7 @@
                                 <div class="bg-gradient-to-br from-indigo-950/80 to-slate-900 p-3 rounded-2xl border border-indigo-500/30">
                                     <div class="flex items-center justify-between mb-1.5">
                                         <span class="text-[10px] font-bold text-indigo-300 flex items-center gap-1">
-                                            <i class="fa-solid fa-robot text-brand-400"></i> Gemini AI Match: 96%
+                                            <i class="fa-solid fa-robot text-brand-400"></i> Linkora AI Match: 96%
                                         </span>
                                         <span class="text-[9px] bg-brand-500/20 text-brand-300 px-1.5 py-0.2 rounded font-bold">Inafaa</span>
                                     </div>
@@ -403,7 +403,7 @@
                         </li>
                         <li class="flex items-start gap-3">
                             <i class="fa-solid fa-circle-check text-blue-400 mt-1"></i>
-                            <span><strong>Uchambuzi wa AI (Gemini):</strong> AI inasoma wasifu (CV) na kuandika barua za maombi (Pitches) kulingana na vigezo vya mwajiri.</span>
+                            <span><strong>Uchambuzi wa Linkora AI:</strong> AI inasoma wasifu (CV) na kuandika barua za maombi (Pitches) kulingana na vigezo vya mwajiri.</span>
                         </li>
                         <li class="flex items-start gap-3">
                             <i class="fa-solid fa-circle-check text-blue-400 mt-1"></i>
@@ -431,7 +431,7 @@
                         Teknolojia ya Kisasa
                     </span>
                     <h2 class="heading-font text-3xl sm:text-4xl font-extrabold text-white mt-4 leading-tight">
-                        Inaendeshwa na Gemini AI Kulinda na Kukuunganisha
+                        Inaendeshwa na Linkora AI Kulinda na Kukuunganisha
                     </h2>
                     <p class="text-slate-300 text-sm sm:text-base mt-4 leading-relaxed">
                         Tofauti na mifumo ya kawaida ya matangazo, Linkora inatumia akili mnemba (Artificial Intelligence) kuhakikisha kila tangazo ni salama na kila mwombaji anapata kazi inayomfaa zaidi.
@@ -476,7 +476,7 @@
                         <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                             <div class="flex items-center gap-3">
                                 <div class="h-3 w-3 rounded-full bg-emerald-400 animate-pulse"></div>
-                                <span class="text-xs font-mono text-slate-300">gemini-1.5-flash • Linkora Live Engine</span>
+                                <span class="text-xs font-mono text-slate-300">Linkora AI Engine v1.0 • Neural Matcher</span>
                             </div>
                             <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">Active</span>
                         </div>
@@ -563,44 +563,6 @@
         </div>
     </section>
 
-    <!-- USSD GATEWAY SECTION -->
-    <section id="ussd-huduma" class="py-16 bg-slate-950/40 border-t border-slate-800/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                
-                <div class="lg:col-span-5 text-center lg:text-left">
-                    <span class="text-xs font-bold text-amber-400 tracking-wider uppercase bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
-                        Inafanya Kazi Popote
-                    </span>
-                    <h2 class="heading-font text-3xl font-extrabold text-white mt-3">
-                        Huna Simu Janja (Smartphone)? Tumia USSD!
-                    </h2>
-                    <p class="text-slate-300 text-sm mt-3 leading-relaxed">
-                        Linkora inawafikia Watanzania wote hadi vijijini kupitia lango la <strong>Africa's Talking USSD Gateway</strong>. Piga msimbo wa USSD kwenye simu ya tochi ili kuona vibarua na kuthibitisha mikataba bila intaneti au bando.
-                    </p>
-                    <div class="mt-6 inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-slate-900 border border-amber-500/40 text-amber-300 font-mono font-bold text-lg">
-                        <i class="fa-solid fa-phone"></i>
-                        <span>*149*00# (Au Msimbo wa Mtandao)</span>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-7">
-                    <div class="glass-panel p-6 rounded-2xl border border-slate-800 font-mono text-xs space-y-3">
-                        <div class="text-slate-400">// USSD Menu Preview kwenye Simu ya Kawaida:</div>
-                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-amber-300 leading-relaxed">
-                            LINKORA TANZANIA<br>
-                            1. Angalia Vibarua vya Leo (Muda Mfupi)<br>
-                            2. Nafasi za Kazi (Muda Mrefu)<br>
-                            3. Thibitisha Kukamilika kwa Kazi<br>
-                            4. Salio langu la Escrow<br>
-                            5. Badili Lugha / Msaada
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
 
     <!-- DOWNLOAD APK SECTION (CORE APPLICATION DOWNLOAD) -->
     <section id="pakua-app" class="py-20 md:py-28 relative overflow-hidden bg-gradient-to-b from-darkBg via-slate-950 to-emerald-950/20 border-t border-slate-800">
@@ -676,7 +638,7 @@
                         <span class="heading-font text-xl font-bold text-white">Linkora</span>
                     </div>
                     <p class="text-slate-400 text-xs leading-relaxed max-w-md">
-                        Jukwaa la kidijitali linalotumia teknolojia ya kisasa ya Gemini AI, uthibitisho wa NIDA, na huduma salama ya Escrow kuunganisha Watanzania na ajira za muda mfupi (vibarua) na muda mrefu.
+                        Jukwaa la kidijitali linalotumia teknolojia ya kisasa ya Linkora AI, uthibitisho wa NIDA, na huduma salama ya Escrow kuunganisha Watanzania na ajira za muda mfupi (vibarua) na muda mrefu.
                     </p>
                     <div class="mt-4 flex items-center gap-4 text-slate-400 text-base">
                         <a href="#" class="hover:text-brand-400"><i class="fa-brands fa-whatsapp"></i></a>
@@ -691,9 +653,9 @@
                     <ul class="space-y-2">
                         <li><a href="#aina-za-ajira" class="hover:text-brand-400">Ajira za Muda Mfupi (Gigs)</a></li>
                         <li><a href="#aina-za-ajira" class="hover:text-brand-400">Ajira za Muda Mrefu</a></li>
-                        <li><a href="#ai-teknolojia" class="hover:text-brand-400">Gemini AI Matching</a></li>
+                        <li><a href="#ai-teknolojia" class="hover:text-brand-400">Linkora AI Matching</a></li>
                         <li><a href="#escrow-usalama" class="hover:text-brand-400">Mfumo wa Escrow (Amana)</a></li>
-                        <li><a href="#ussd-huduma" class="hover:text-brand-400">Huduma ya USSD (*149*00#)</a></li>
+                        <li><a href="#pakua-app" class="hover:text-brand-400">Pakua Android APK</a></li>
                     </ul>
                 </div>
 

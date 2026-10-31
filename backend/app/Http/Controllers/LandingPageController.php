@@ -32,7 +32,6 @@ class LandingPageController extends Controller
                     'applications' => '/api/applications',
                     'escrow' => '/api/escrow',
                     'ai' => '/api/ai',
-                    'ussd' => '/api/ussd',
                     'courses' => '/api/courses',
                 ],
                 'admin_portal' => 'https://linkora.co.tz/admin',

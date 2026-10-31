@@ -42,12 +42,9 @@ fun AdminAndUssdScreen(
     onDeleteUser: (String) -> Unit,
     onDeleteListing: (String) -> Unit,
     onReleaseEscrow: (String) -> Unit,
-    onSimulateUssdDial: (code: String) -> Unit
+    onSimulateUssdDial: ((code: String) -> Unit)? = null
 ) {
-    var ussdActive by remember { mutableStateOf(false) }
-    var ussdScreenState by remember { mutableStateOf(0) }
-    var ussdInputCode by remember { mutableStateOf("*150*88#") }
-    var selectedTab by remember { mutableStateOf(0) } // 0 = Web Portal, 1 = Users & Registration, 2 = Fraud & Moderation, 3 = USSD Gateway
+    var selectedTab by remember { mutableStateOf(0) } // 0 = Web Portal, 1 = Users & Registration, 2 = Fraud & Moderation
 
     LazyColumn(
         contentPadding = PaddingValues(bottom = 80.dp),
@@ -125,20 +122,8 @@ fun AdminAndUssdScreen(
                         FilterChip(
                             selected = selectedTab == 2,
                             onClick = { selectedTab = 2 },
-                            label = { Text(if (isSwahili) "AI Fraud" else "Fraud Guard", fontSize = 11.sp) },
+                            label = { Text(if (isSwahili) "Linkora AI Fraud" else "Linkora AI Guard", fontSize = 11.sp) },
                             leadingIcon = { Icon(Icons.Default.AdminPanelSettings, contentDescription = null, modifier = Modifier.size(14.dp)) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = BrandBlue,
-                                selectedLabelColor = Color.White
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        FilterChip(
-                            selected = selectedTab == 3,
-                            onClick = { selectedTab = 3 },
-                            label = { Text("USSD", fontSize = 11.sp) },
-                            leadingIcon = { Icon(Icons.Default.PhoneAndroid, contentDescription = null, modifier = Modifier.size(14.dp)) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = BrandBlue,
                                 selectedLabelColor = Color.White
@@ -387,7 +372,7 @@ fun AdminAndUssdScreen(
                                 Icon(Icons.Default.Security, contentDescription = null, tint = RedWarning)
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
-                                    text = "Gemini AI Fraud & Listing Moderation Queue",
+                                    text = "Linkora AI Fraud & Listing Moderation Queue",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 14.sp
                                 )
@@ -535,151 +520,6 @@ fun AdminAndUssdScreen(
                                                     Text("SuperAdmin Release", fontSize = 10.sp)
                                                 }
                                             }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Section tab 3: USSD Feature Phone Simulator Gateway
-        if (selectedTab == 3) {
-            item {
-                Card(
-                    shape = RoundedCornerShape(14.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1E293B)),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.PhoneAndroid, contentDescription = null, tint = GoldAccent)
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "USSD Feature Phone Simulator (*150*88#)",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp,
-                                    color = Color.White
-                                )
-                            }
-
-                            Surface(
-                                shape = RoundedCornerShape(4.dp),
-                                color = GoldAccent
-                            ) {
-                                Text(
-                                    text = "OFFLINE READY",
-                                    fontSize = 9.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = EmeraldDark,
-                                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        if (!ussdActive) {
-                            OutlinedTextField(
-                                value = ussdInputCode,
-                                onValueChange = { ussdInputCode = it },
-                                label = { Text("USSD Dial Code", color = Color.LightGray) },
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = Color.White,
-                                    unfocusedTextColor = Color.White,
-                                    focusedBorderColor = GoldAccent,
-                                    unfocusedBorderColor = Color.Gray
-                                ),
-                                singleLine = true,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            Button(
-                                onClick = {
-                                    ussdActive = true
-                                    ussdScreenState = 0
-                                    onSimulateUssdDial(ussdInputCode)
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = GoldAccent, contentColor = EmeraldDark),
-                                shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .testTag("dial_ussd_button")
-                            ) {
-                                Icon(Icons.Default.Call, contentDescription = null, modifier = Modifier.size(16.dp))
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text("Dial USSD Menu", fontWeight = FontWeight.Bold)
-                            }
-                        } else {
-                            Surface(
-                                color = Color(0xFF0F172A),
-                                shape = RoundedCornerShape(8.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, GoldAccent),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Column(modifier = Modifier.padding(12.dp)) {
-                                    Text(
-                                        text = "=== Linkora USSD ===",
-                                        color = GoldAccent,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-
-                                    when (ussdScreenState) {
-                                        0 -> {
-                                            Text("1. Angalia Fursa za Kazi", color = Color.White, fontSize = 12.sp)
-                                            Text("2. Angalia Salio la Escrow", color = Color.White, fontSize = 12.sp)
-                                            Text("3. Thibitisha NIDA ID", color = Color.White, fontSize = 12.sp)
-                                            Text("4. Msaada wa Swebetech", color = Color.White, fontSize = 12.sp)
-                                        }
-                                        1 -> {
-                                            Text("Fursa za Hivi Karibuni:", color = GoldAccent, fontSize = 12.sp)
-                                            Text("• Fursa zilizopostiwa kwenye mfumo", color = Color.White, fontSize = 11.sp)
-                                            Text("0. Rudi Nyuma", color = Color.Gray, fontSize = 10.sp)
-                                        }
-                                        2 -> {
-                                            Text("Salio Lako la Escrow:", color = GoldAccent, fontSize = 12.sp)
-                                            Text("Huna malipo yanayosubiri katika Escrow", color = Color.White, fontSize = 11.sp)
-                                            Text("0. Rudi Nyuma", color = Color.Gray, fontSize = 10.sp)
-                                        }
-                                    }
-
-                                    Spacer(modifier = Modifier.height(10.dp))
-
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Button(
-                                            onClick = { ussdScreenState = 1 },
-                                            colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            Text("Option 1", fontSize = 10.sp)
-                                        }
-                                        Button(
-                                            onClick = { ussdScreenState = 2 },
-                                            colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            Text("Option 2", fontSize = 10.sp)
-                                        }
-                                        Button(
-                                            onClick = { ussdActive = false },
-                                            colors = ButtonDefaults.buttonColors(containerColor = RedWarning),
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            Text("Exit", fontSize = 10.sp)
                                         }
                                     }
                                 }

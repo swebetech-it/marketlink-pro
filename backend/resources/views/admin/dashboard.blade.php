@@ -51,9 +51,9 @@
         </div>
 
         <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">AI Fraud Guard</span>
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Linkora AI Guard</span>
             <div class="text-2xl font-black text-purple-400 mt-1">100%</div>
-            <span class="text-[10px] text-purple-400 font-semibold">Gemini 2.5 Active</span>
+            <span class="text-[10px] text-purple-400 font-semibold">Linkora AI Active</span>
         </div>
     </div>
 

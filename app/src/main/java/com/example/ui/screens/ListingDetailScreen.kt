@@ -217,7 +217,7 @@ fun ListingDetailScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = if (isSwahili) "Tathmini ya Akili Mnemba (Gemini AI)" else "Gemini AI Compatibility Score",
+                                text = if (isSwahili) "Tathmini ya Akili Mnemba (Linkora AI)" else "Linkora AI Compatibility Score",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 13.sp,
                                 color = Color.White
@@ -249,7 +249,7 @@ fun ListingDetailScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = if (isSwahili) "Gemini inachambua mfumo wa ujuzi wako..." else "Gemini is analyzing your skills & NIDA profile...",
+                                text = if (isSwahili) "Linkora AI inachambua mfumo wa ujuzi wako..." else "Linkora AI is analyzing your skills & NIDA profile...",
                                 fontSize = 12.sp,
                                 color = Color.White.copy(alpha = 0.8f)
                             )
@@ -386,9 +386,9 @@ fun ListingDetailScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
                         text = if (isSwahili)
-                            "Weka maelezo ya ombi lako au utumie AI kukuandikia barua ya ombi iliyoboreshwa."
+                            "Weka maelezo ya ombi lako au utumie Linkora AI kukuandikia barua ya ombi iliyoboreshwa."
                         else
-                            "Enter your pitch message or use Gemini AI to generate a polished cover letter.",
+                            "Enter your pitch message or use Linkora AI to generate a polished cover letter.",
                         fontSize = 12.sp,
                         color = SlateTextSecondary
                     )
@@ -404,7 +404,7 @@ fun ListingDetailScreen(
                         Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = GoldAccent, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = if (isSwahili) "Tengeneza Ombi kwa Gemini AI" else "Auto-Generate Pitch via Gemini",
+                            text = if (isSwahili) "Tengeneza Ombi kwa Linkora AI" else "Auto-Generate Pitch via Linkora AI",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
                         )
