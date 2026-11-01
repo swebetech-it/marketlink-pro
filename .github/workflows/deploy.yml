@@ -24,16 +24,70 @@ jobs:
           port: ${{ secrets.SERVER_PORT || secrets.PORT || 22 }}
           script_stop: true
           script: |
-            echo "Starting deployment on server..."
-            # Auto-detect application directory
-            if [ -d "/var/www/linkora" ]; then
-              cd /var/www/linkora
-            elif [ -d "/var/www/marketlink-pro" ]; then
-              cd /var/www/marketlink-pro
-            else
-              echo "Error: Application directory not found in /var/www/"
-              exit 1
+            echo "=========================================================="
+            echo " Connecting to Swebetech server and resolving app path... "
+            echo "=========================================================="
+
+            git config --global --add safe.directory "*" 2>/dev/null || true
+
+            TARGET_DIR=""
+
+            # 1. Check custom directory configured in GitHub secret
+            CUSTOM_DIR="${{ secrets.SERVER_APP_DIR || secrets.APP_DIR }}"
+            if [ -n "$CUSTOM_DIR" ] && [ -d "$CUSTOM_DIR" ]; then
+              echo "Using custom directory from secrets: $CUSTOM_DIR"
+              TARGET_DIR="$CUSTOM_DIR"
             fi
 
+            # 2. Check standard server paths
+            if [ -z "$TARGET_DIR" ]; then
+              for dir in "/var/www/linkora" "/var/www/marketlink-pro" "/var/www/html/linkora" "/var/www/html/marketlink-pro" "$HOME/linkora" "$HOME/marketlink-pro" "/root/linkora" "/root/marketlink-pro" "/var/www/html"; do
+                if [ -d "$dir" ] && ([ -d "$dir/.git" ] || [ -f "$dir/artisan" ] || [ -f "$dir/backend/artisan" ]); then
+                  echo "Found application directory at: $dir"
+                  TARGET_DIR="$dir"
+                  break
+                fi
+              done
+            fi
+
+            # 3. Dynamic scan across server for existing Linkora installation
+            if [ -z "$TARGET_DIR" ]; then
+              echo "Scanning server for existing Linkora installation..."
+              FOUND_ARTISAN=$(find /var/www /home /root -maxdepth 4 -name "artisan" 2>/dev/null | head -n 1)
+              if [ -n "$FOUND_ARTISAN" ]; then
+                DETECTED_DIR="$(dirname "$FOUND_ARTISAN")"
+                if [ "$(basename "$DETECTED_DIR")" = "backend" ] && [ -d "$DETECTED_DIR/../.git" ]; then
+                  DETECTED_DIR="$(cd "$DETECTED_DIR/.." && pwd)"
+                fi
+                echo "Discovered installation at: $DETECTED_DIR"
+                TARGET_DIR="$DETECTED_DIR"
+              fi
+            fi
+
+            # 4. Self-Healing Fallback: Clone directly into /var/www/linkora if not found anywhere
+            if [ -z "$TARGET_DIR" ]; then
+              echo "No existing installation found. Auto-cloning into /var/www/linkora..."
+              mkdir -p /var/www
+              git clone https://github.com/swebetech-it/marketlink-pro.git /var/www/linkora
+              TARGET_DIR="/var/www/linkora"
+            fi
+
+            echo "Target application directory: $TARGET_DIR"
+            cd "$TARGET_DIR"
+
             # Execute deployment script
-            bash server_config/deploy.sh
+            if [ -f "server_config/deploy.sh" ]; then
+              bash server_config/deploy.sh
+            elif [ -f "deploy.sh" ]; then
+              bash deploy.sh
+            elif [ -f "../server_config/deploy.sh" ]; then
+              bash ../server_config/deploy.sh
+            else
+              echo "Executing fallback deployment..."
+              git fetch origin main && git reset --hard origin/main
+              if [ -d "backend" ]; then cd backend; fi
+              if command -v composer &> /dev/null; then
+                composer install --no-dev --optimize-autoloader --no-interaction
+              fi
+              php artisan app:update --force
+            fi

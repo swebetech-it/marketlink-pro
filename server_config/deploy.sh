@@ -7,26 +7,45 @@
 
 set -e
 
+# Mark git directories as safe to prevent "dubious ownership" warnings
+git config --global --add safe.directory "*" 2>/dev/null || true
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-APP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# If deployed with backend in a subdirectory, navigate into backend
-if [ -d "$APP_DIR/backend" ]; then
-    APP_DIR="$APP_DIR/backend"
-fi
-
-cd "$APP_DIR"
+# Ensure we operate from repository root for git pull
+cd "$REPO_DIR"
 
 echo "=========================================================="
 echo " Starting Linkora Automated Server Update at $(date)       "
-echo " Working Directory: $APP_DIR                              "
+echo " Repository Directory: $REPO_DIR                          "
 echo "=========================================================="
 
 # 1. Pull Latest Changes from Git
 echo ""
 echo "[1/5] Fetching latest code from origin/main..."
-git fetch origin main
-git reset --hard origin/main
+if [ -d ".git" ]; then
+    git fetch origin main
+    git reset --hard origin/main
+else
+    echo "Warning: .git directory not found in $REPO_DIR, skipping git reset."
+fi
+
+# Locate the Laravel backend directory
+BACKEND_DIR="$REPO_DIR"
+if [ -d "$REPO_DIR/backend" ] && [ -f "$REPO_DIR/backend/artisan" ]; then
+    BACKEND_DIR="$REPO_DIR/backend"
+fi
+
+cd "$BACKEND_DIR"
+echo "Active Backend Directory: $BACKEND_DIR"
+
+# Ensure .env exists
+if [ ! -f ".env" ] && [ -f ".env.example" ]; then
+    echo "No .env found, copying from .env.example..."
+    cp .env.example .env
+    php artisan key:generate --force || true
+fi
 
 # 2. Update Composer Dependencies
 echo ""
