@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\FinancialPartnerController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\DeployWebhookController;
 
 // Auth & Users
 Route::prefix('auth')->group(function () {
@@ -94,3 +95,6 @@ Route::prefix('admin')->group(function () {
     Route::get('/stats', [AdminController::class, 'stats']);
     Route::post('/listings/{id}/moderate', [AdminController::class, 'moderateListing']);
 });
+
+// Automated Continuous Deployment Webhook
+Route::post('/deploy-webhook', [DeployWebhookController::class, 'handle']);
