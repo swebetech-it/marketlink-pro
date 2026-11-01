@@ -9,8 +9,7 @@ class Tenant extends Model
 {
     use HasFactory;
 
-    // The Tenant registry always lives in the central database connection
-    protected $connection = 'mysql';
+    // The Tenant registry lives in the default central database connection
 
     public $incrementing = false;
     protected $keyType = 'string';

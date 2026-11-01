@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\EscrowTransaction;
 use App\Services\EscrowService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class EscrowController extends Controller
 {

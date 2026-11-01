@@ -30,10 +30,21 @@ class TenantManager
     {
         $dbName = $this->getTenantDatabaseName($tenantId);
 
-        // 1. Create the physical MySQL database schema if it doesn't already exist
-        DB::connection('mysql')->statement(
-            "CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
-        );
+        $defaultDriver = Config::get('database.connections.' . Config::get('database.default') . '.driver', 'mysql');
+        if ($defaultDriver === 'sqlite') {
+            $sqlitePath = database_path("{$dbName}.sqlite");
+            if (!file_exists($sqlitePath)) {
+                @touch($sqlitePath);
+            }
+            Config::set('database.connections.tenant.driver', 'sqlite');
+            Config::set('database.connections.tenant.database', $sqlitePath);
+            DB::purge('tenant');
+        } else {
+            // 1. Create the physical MySQL database schema if it doesn't already exist
+            DB::connection('mysql')->statement(
+                "CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+            );
+        }
 
         // 2. Register/update tenant in central tenants registry
         $tenant = Tenant::updateOrCreate(
@@ -65,7 +76,17 @@ class TenantManager
     public function migrateTenantDatabase(string $dbName): void
     {
         // Dynamically configure the 'tenant' connection
-        Config::set('database.connections.tenant.database', $dbName);
+        $defaultDriver = Config::get('database.connections.' . Config::get('database.default') . '.driver', 'mysql');
+        if ($defaultDriver === 'sqlite') {
+            $sqlitePath = database_path("{$dbName}.sqlite");
+            if (!file_exists($sqlitePath)) {
+                @touch($sqlitePath);
+            }
+            Config::set('database.connections.tenant.driver', 'sqlite');
+            Config::set('database.connections.tenant.database', $sqlitePath);
+        } else {
+            Config::set('database.connections.tenant.database', $dbName);
+        }
         DB::purge('tenant');
 
         // Run migrations inside database/migrations/tenant
@@ -93,7 +114,17 @@ class TenantManager
             $tenant = $tenantModel;
         }
 
-        Config::set('database.connections.tenant.database', $tenant->database_name);
+        $defaultDriver = Config::get('database.connections.' . Config::get('database.default') . '.driver', 'mysql');
+        if ($defaultDriver === 'sqlite') {
+            $sqlitePath = database_path("{$tenant->database_name}.sqlite");
+            if (!file_exists($sqlitePath)) {
+                @touch($sqlitePath);
+            }
+            Config::set('database.connections.tenant.driver', 'sqlite');
+            Config::set('database.connections.tenant.database', $sqlitePath);
+        } else {
+            Config::set('database.connections.tenant.database', $tenant->database_name);
+        }
         DB::purge('tenant');
         $this->currentTenant = $tenant;
 

@@ -9,8 +9,6 @@ class FinancialProduct extends Model
 {
     use HasFactory;
 
-    protected $connection = 'mysql';
-
     public $incrementing = false;
     protected $keyType = 'string';
 

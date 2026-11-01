@@ -9,8 +9,6 @@ class NotificationItem extends Model
 {
     use HasFactory;
 
-    protected $connection = 'mysql';
-
     protected $table = 'notifications';
 
     public $incrementing = false;

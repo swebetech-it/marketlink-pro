@@ -11,8 +11,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    // The Central User Registry always resides in the main database
-    protected $connection = 'mysql';
+    // The Central User Registry resides in the default database
 
     public $incrementing = false;
     protected $keyType = 'string';
