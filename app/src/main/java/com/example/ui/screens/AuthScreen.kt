@@ -971,7 +971,7 @@ fun AuthScreen(
 
             // Version Indicator Badge so user can verify updated build
             Text(
-                text = "Linkora v1.0.1 (Build 2) • Swebetech IT Solutions",
+                text = "Linkora v1.0.2 (Build 3) • Swebetech IT Solutions",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Medium,
                 color = SlateTextSecondary.copy(alpha = 0.7f),

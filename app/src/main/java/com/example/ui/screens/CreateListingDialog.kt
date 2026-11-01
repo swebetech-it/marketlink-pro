@@ -122,7 +122,7 @@ fun CreateListingDialog(
                     }
                 }
 
-                Divider(modifier = Modifier.padding(vertical = 10.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
 
                 Column(
                     modifier = Modifier
@@ -359,10 +359,9 @@ fun CreateListingDialog(
                         fontWeight = FontWeight.Medium
                     )
                 }
-                }
             }
 
-            Divider(modifier = Modifier.padding(vertical = 10.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
 
             // Action Buttons
             Row(
@@ -405,4 +404,5 @@ fun CreateListingDialog(
             }
         }
     }
+}
 }

@@ -587,8 +587,8 @@
                     
                     <div class="text-center sm:text-left">
                         <div class="flex items-center justify-center sm:justify-start gap-2">
-                            <span class="text-xl font-bold text-white">Linkora v1.0.1</span>
-                            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded border border-emerald-500/30">APK Rasmi (Updated)</span>
+                            <span class="text-xl font-bold text-white">Linkora v1.0.2</span>
+                            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded border border-emerald-500/30">APK Rasmi (Latest)</span>
                         </div>
                         <p class="text-xs text-slate-400 mt-1">Ujazo: ~18 MB • Inasaidia Android 7.0 na Kuendelea</p>
                         <p class="text-xs text-slate-400 mt-0.5">Imeunganishwa na Seva: <strong class="text-emerald-400 font-mono">api.linkora.co.tz</strong></p>

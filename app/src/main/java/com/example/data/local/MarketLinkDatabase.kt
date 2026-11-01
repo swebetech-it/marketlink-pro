@@ -5,6 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.data.model.UserProfile
 import com.example.data.model.Listing
 import com.example.data.model.Application
@@ -27,7 +29,7 @@ import com.example.data.model.NotificationItem
         Message::class,
         NotificationItem::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -46,6 +48,40 @@ abstract class MarketLinkDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: MarketLinkDatabase? = null
 
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Version 1 to 2 schema baseline
+            }
+        }
+
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                try {
+                    db.execSQL("ALTER TABLE user_profiles ADD COLUMN tenantId TEXT")
+                } catch (_: Exception) {}
+                try {
+                    db.execSQL("ALTER TABLE user_profiles ADD COLUMN tenantDatabase TEXT")
+                } catch (_: Exception) {}
+                try {
+                    db.execSQL("ALTER TABLE user_profiles ADD COLUMN isolationLevel TEXT DEFAULT 'SHARED'")
+                } catch (_: Exception) {}
+            }
+        }
+
+        val MIGRATION_1_3 = object : Migration(1, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                try {
+                    db.execSQL("ALTER TABLE user_profiles ADD COLUMN tenantId TEXT")
+                } catch (_: Exception) {}
+                try {
+                    db.execSQL("ALTER TABLE user_profiles ADD COLUMN tenantDatabase TEXT")
+                } catch (_: Exception) {}
+                try {
+                    db.execSQL("ALTER TABLE user_profiles ADD COLUMN isolationLevel TEXT DEFAULT 'SHARED'")
+                } catch (_: Exception) {}
+            }
+        }
+
         fun getDatabase(context: Context): MarketLinkDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -53,7 +89,9 @@ abstract class MarketLinkDatabase : RoomDatabase() {
                     MarketLinkDatabase::class.java,
                     "marketlink_pro_db"
                 )
-                .fallbackToDestructiveMigration()
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_1_3)
+                .fallbackToDestructiveMigration(dropAllTables = true)
+                .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
                 .build()
                 INSTANCE = instance
                 instance
