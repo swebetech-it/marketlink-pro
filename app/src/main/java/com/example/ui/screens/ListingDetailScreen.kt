@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import com.example.data.model.Listing
 import com.example.data.model.VerificationStatus
 import com.example.ui.components.BrandOrange
@@ -428,6 +429,11 @@ fun ListingDetailScreen(
     if (showApplyDialog) {
         AlertDialog(
             onDismissRequest = { showApplyDialog = false },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+                dismissOnClickOutside = false,
+                dismissOnBackPress = true
+            ),
             title = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Edit, contentDescription = null, tint = EmeraldPrimary)

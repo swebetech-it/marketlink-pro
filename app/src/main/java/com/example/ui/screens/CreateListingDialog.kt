@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +17,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.data.model.OpportunityCategory
 import com.example.ui.theme.EmeraldPrimary
 import com.example.ui.theme.GoldAccent
@@ -75,27 +78,58 @@ fun CreateListingDialog(
         Pair("GENERAL_LABOR", if (isSwahili) "⚙️ Kibarua cha Jumla" else "⚙️ General Labor")
     )
 
-    AlertDialog(
+    Dialog(
         onDismissRequest = onDismiss,
-        title = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = GoldAccent, modifier = Modifier.size(22.dp))
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = if (isSwahili) "Tangaza Kazi (Targeted Match)" else "Post Opportunity (Targeted Match)",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 17.sp,
-                    color = EmeraldPrimary
-                )
-            }
-        },
-        text = {
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnClickOutside = false,
+            dismissOnBackPress = true
+        )
+    ) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 6.dp,
+            modifier = Modifier
+                .fillMaxWidth(0.95f)
+                .fillMaxHeight(0.92f)
+                .imePadding()
+                .testTag("create_listing_dialog")
+        ) {
             Column(
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                    .fillMaxSize()
+                    .padding(20.dp)
             ) {
+                // Header with title and Close button
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = GoldAccent, modifier = Modifier.size(22.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = if (isSwahili) "Tangaza Kazi (Targeted Match)" else "Post Opportunity (Targeted Match)",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp,
+                            color = EmeraldPrimary
+                        )
+                    }
+                    IconButton(onClick = onDismiss) {
+                        Icon(Icons.Default.Close, contentDescription = "Close", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+
+                Divider(modifier = Modifier.padding(vertical = 10.dp))
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
                 // Info banner about targeted AI dispatch
                 Surface(
                     shape = RoundedCornerShape(8.dp),
@@ -325,42 +359,50 @@ fun CreateListingDialog(
                         fontWeight = FontWeight.Medium
                     )
                 }
+                }
             }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    if (title.isNotBlank() && description.isNotBlank()) {
-                        val skillsList = skillsStr.split(",").map { it.trim() }.filter { it.isNotEmpty() }
-                        val amt = amountTzsStr.toLongOrNull() ?: 25000L
-                        onSubmit(
-                            title,
-                            selectedCategory,
-                            description,
-                            compensation.ifBlank { "TZS $amt / task" },
-                            amt,
-                            location,
-                            skillsList,
-                            isEscrowRequired,
-                            cropType.ifBlank { null },
-                            equipmentDetails.ifBlank { null },
-                            selectedProfessionCode,
-                            if (isProfessionalJob) "PROFESSIONAL" else "NON_PROFESSIONAL",
-                            district.ifBlank { null }
-                        )
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.testTag("submit_listing_button")
+
+            Divider(modifier = Modifier.padding(vertical = 10.dp))
+
+            // Action Buttons
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(if (isSwahili) "Tangaza Kazi (Wafikie Wafanyakazi)" else "Publish & Dispatch Match", color = Color.White)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(if (isSwahili) "Ghairi" else "Cancel")
+                TextButton(onClick = onDismiss) {
+                    Text(if (isSwahili) "Ghairi" else "Cancel")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = {
+                        if (title.isNotBlank() && description.isNotBlank()) {
+                            val skillsList = skillsStr.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+                            val amt = amountTzsStr.toLongOrNull() ?: 25000L
+                            onSubmit(
+                                title,
+                                selectedCategory,
+                                description,
+                                compensation.ifBlank { "TZS $amt / task" },
+                                amt,
+                                location,
+                                skillsList,
+                                isEscrowRequired,
+                                cropType.ifBlank { null },
+                                equipmentDetails.ifBlank { null },
+                                selectedProfessionCode,
+                                if (isProfessionalJob) "PROFESSIONAL" else "NON_PROFESSIONAL",
+                                district.ifBlank { null }
+                            )
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.testTag("submit_listing_button")
+                ) {
+                    Text(if (isSwahili) "Tangaza Kazi (Wafikie Wafanyakazi)" else "Publish & Dispatch Match", color = Color.White)
+                }
             }
         }
-    )
+    }
 }

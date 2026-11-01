@@ -31,6 +31,7 @@ import com.example.ui.components.BrandGreen
 import com.example.ui.components.BrandOrange
 import com.example.ui.components.MarketLinkLogoMark
 import com.example.ui.components.MarketLinkLogoText
+import com.example.ui.components.BackendServerConfigDialog
 import com.example.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -156,6 +157,7 @@ fun AuthScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .imePadding()
                 .verticalScroll(rememberScrollState())
         ) {
             // Top Hero Header Banner
@@ -200,26 +202,41 @@ fun AuthScreen(
                             }
                         }
 
-                        // Language Toggle
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .clickable { onLanguageToggle(!isSwahili) }
-                                .padding(4.dp)
-                        ) {
-                            Icon(
-                                Icons.Default.Language,
-                                contentDescription = "Language",
-                                tint = GoldAccent,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = if (isSwahili) "SW (Swahili)" else "EN (English)",
-                                color = GoldAccent,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.ExtraBold
-                            )
+                        // Right actions: Server settings & Language Toggle
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            IconButton(
+                                onClick = { showServerConfigDialog = true },
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.Dns,
+                                    contentDescription = "Server Settings",
+                                    tint = GoldAccent,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(6.dp))
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .clickable { onLanguageToggle(!isSwahili) }
+                                    .padding(4.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.Language,
+                                    contentDescription = "Language",
+                                    tint = GoldAccent,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = if (isSwahili) "SW (Swahili)" else "EN (English)",
+                                    color = GoldAccent,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.ExtraBold
+                                )
+                            }
                         }
                     }
 
@@ -951,6 +968,23 @@ fun AuthScreen(
             }
 
             Spacer(modifier = Modifier.height(32.dp))
+        }
+
+        if (showServerConfigDialog) {
+            BackendServerConfigDialog(
+                isSwahili = isSwahili,
+                currentUrl = currentServerUrl,
+                onDismiss = { showServerConfigDialog = false },
+                onSaveAndSync = { newUrl, onDone ->
+                    currentServerUrl = newUrl
+                    if (onUpdateBaseUrl != null) {
+                        onUpdateBaseUrl(newUrl, onDone)
+                    } else {
+                        com.example.data.remote.ApiClient.updateBaseUrl(newUrl)
+                        onDone(true)
+                    }
+                }
+            )
         }
     }
 }

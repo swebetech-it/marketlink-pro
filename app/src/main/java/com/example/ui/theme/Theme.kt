@@ -1,6 +1,9 @@
 package com.example.ui.theme
 
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -9,6 +12,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+
+private fun Context.findActivity(): Activity? {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+    return null
+}
 
 private val LightColorScheme = lightColorScheme(
     primary = EmeraldPrimary,
@@ -51,9 +63,14 @@ fun MarketLinkProTheme(
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+            val activity = view.context.findActivity()
+            if (activity != null) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                    @Suppress("DEPRECATION")
+                    activity.window.statusBarColor = colorScheme.primary.toArgb()
+                }
+                WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars = false
+            }
         }
     }
 

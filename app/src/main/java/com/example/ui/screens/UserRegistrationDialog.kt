@@ -18,6 +18,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.data.model.UserRole
 import com.example.data.model.VerificationStatus
 import com.example.ui.components.BrandBlue
@@ -109,22 +111,27 @@ fun UserRegistrationDialog(
         "Moshi (Kilimanjaro)"
     )
 
-    AlertDialog(
+    Dialog(
         onDismissRequest = onDismiss,
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag("user_registration_dialog")
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnClickOutside = false,
+            dismissOnBackPress = true
+        )
     ) {
         Surface(
             shape = RoundedCornerShape(16.dp),
             color = SlateSurface,
             tonalElevation = 6.dp,
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
+                .fillMaxWidth(0.95f)
+                .fillMaxHeight(0.92f)
+                .imePadding()
+                .testTag("user_registration_dialog")
         ) {
             Column(
                 modifier = Modifier
+                    .fillMaxSize()
                     .padding(20.dp)
                     .verticalScroll(rememberScrollState())
             ) {

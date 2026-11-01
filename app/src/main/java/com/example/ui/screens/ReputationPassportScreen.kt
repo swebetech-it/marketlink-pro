@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import com.example.data.model.UserProfile
 import com.example.data.model.VerificationStatus
 import com.example.ui.components.ReputationPassportCard
@@ -283,6 +284,11 @@ fun ReputationPassportScreen(
     if (showNidaDialog) {
         AlertDialog(
             onDismissRequest = { showNidaDialog = false },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+                dismissOnClickOutside = false,
+                dismissOnBackPress = true
+            ),
             title = {
                 Text(if (isSwahili) "Ingiza Namba ya NIDA" else "Enter NIDA National ID Number")
             },

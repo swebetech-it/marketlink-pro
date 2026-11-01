@@ -551,38 +551,43 @@ private data class RepoPartB(
         onResult: ((Boolean, String?) -> Unit)? = null
     ) {
         viewModelScope.launch {
-            val newUserId = (if (accountType == "ORGANIZATION") "org_" else "usr_") + System.currentTimeMillis().toString().takeLast(6)
-            val profile = UserProfile(
-                id = newUserId,
-                fullName = fullName,
-                phone = phone,
-                email = email,
-                role = role,
-                accountType = accountType,
-                organizationName = organizationName,
-                tinNumber = tinNumber,
-                industrySector = industrySector,
-                primaryProfession = primaryProfession,
-                district = district,
-                verificationStatus = if (nidaNumber.isNotBlank() || tinNumber.isNotBlank()) VerificationStatus.VERIFIED else VerificationStatus.PENDING,
-                nidaNumber = nidaNumber,
-                location = location,
-                bio = bio,
-                skills = skills,
-                rating = 5.0f,
-                totalTransactions = 0,
-                completedGigs = 0,
-                reputationScore = if (nidaNumber.isNotBlank() || tinNumber.isNotBlank()) 850 else 700,
-                communityVouches = 0,
-                badges = if (accountType == "ORGANIZATION") listOf("Verified Organization") else if (nidaNumber.isNotBlank()) listOf("NIDA Verified") else emptyList()
-            )
-            val (success, err) = repository.registerNewUser(profile, password)
-            if (success) {
-                _selectedRole.value = role
-                _isLoggedIn.value = true
-                onResult?.invoke(true, null)
-            } else {
-                onResult?.invoke(false, err)
+            try {
+                val newUserId = (if (accountType == "ORGANIZATION") "org_" else "usr_") + System.currentTimeMillis().toString().takeLast(6)
+                val profile = UserProfile(
+                    id = newUserId,
+                    fullName = fullName,
+                    phone = phone,
+                    email = email,
+                    role = role,
+                    accountType = accountType,
+                    organizationName = organizationName,
+                    tinNumber = tinNumber,
+                    industrySector = industrySector,
+                    primaryProfession = primaryProfession,
+                    district = district,
+                    verificationStatus = if (nidaNumber.isNotBlank() || tinNumber.isNotBlank()) VerificationStatus.VERIFIED else VerificationStatus.PENDING,
+                    nidaNumber = nidaNumber,
+                    location = location,
+                    bio = bio,
+                    skills = skills,
+                    rating = 5.0f,
+                    totalTransactions = 0,
+                    completedGigs = 0,
+                    reputationScore = if (nidaNumber.isNotBlank() || tinNumber.isNotBlank()) 850 else 700,
+                    communityVouches = 0,
+                    badges = if (accountType == "ORGANIZATION") listOf("Verified Organization") else if (nidaNumber.isNotBlank()) listOf("NIDA Verified") else emptyList()
+                )
+                val (success, err) = repository.registerNewUser(profile, password)
+                if (success) {
+                    _selectedRole.value = role
+                    _isLoggedIn.value = true
+                    onResult?.invoke(true, null)
+                } else {
+                    onResult?.invoke(false, err)
+                }
+            } catch (e: Throwable) {
+                android.util.Log.e("MarketLinkVM", "Error in registerUser: ${e.message}", e)
+                onResult?.invoke(false, e.localizedMessage ?: "Registration error: ${e.message}")
             }
         }
     }
@@ -629,13 +634,18 @@ private data class RepoPartB(
 
     fun signInWithCredentials(login: String, password: String? = null, onResult: (Boolean, String?) -> Unit) {
         viewModelScope.launch {
-            val (profile, err) = repository.loginUser(login, password)
-            if (profile != null) {
-                _selectedRole.value = profile.role
-                _isLoggedIn.value = true
-                onResult(true, null)
-            } else {
-                onResult(false, err ?: "Invalid credentials or user not found on backend database.")
+            try {
+                val (profile, err) = repository.loginUser(login, password)
+                if (profile != null) {
+                    _selectedRole.value = profile.role
+                    _isLoggedIn.value = true
+                    onResult(true, null)
+                } else {
+                    onResult(false, err ?: "Invalid credentials or user not found on backend database.")
+                }
+            } catch (e: Throwable) {
+                android.util.Log.e("MarketLinkVM", "Error in signInWithCredentials: ${e.message}", e)
+                onResult(false, e.localizedMessage ?: "Sign in error: ${e.message}")
             }
         }
     }

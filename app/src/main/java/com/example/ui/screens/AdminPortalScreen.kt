@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.DialogProperties
 import com.example.ui.theme.*
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -221,6 +222,11 @@ fun AdminPortalScreen(
     if (showUrlEditDialog) {
         AlertDialog(
             onDismissRequest = { showUrlEditDialog = false },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+                dismissOnClickOutside = false,
+                dismissOnBackPress = true
+            ),
             title = {
                 Text(
                     text = if (isSwahili) "Badilisha Anuani ya Web Portal" else "Configure Web Portal URL",

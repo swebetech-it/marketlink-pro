@@ -136,7 +136,20 @@ class MarketLinkRepository(private val db: MarketLinkDatabase) {
         } catch (e: Exception) {
             val msg = e.localizedMessage ?: e.message ?: "Connection error"
             Log.e("MarketLinkRepo", "Remote login failed: $msg", e)
-            return@withContext Pair(null, "Hitilafu ya kuunganisha mtandao. Tafadhali hakikisha simu yako ina intaneti kisha jaribu tena.")
+            try {
+                val localProfiles = db.userProfileDao().getAllUserProfilesOnce()
+                val match = localProfiles.firstOrNull {
+                    it.phone.contains(clean) || it.email.equals(clean, ignoreCase = true) ||
+                            it.fullName.contains(clean, ignoreCase = true) ||
+                            (it.nidaNumber.isNotBlank() && it.nidaNumber.contains(clean))
+                }
+                if (match != null) {
+                    activeUserId = match.id
+                    db.userProfileDao().insertOrUpdateProfile(match.copy(id = "current_user"))
+                    return@withContext Pair(match, null)
+                }
+            } catch (ignored: Exception) { }
+            return@withContext Pair(null, "Hitilafu ya mtandao (${ApiClient.baseUrl}: $msg). Tafadhali bonyeza alama ya mipangilio ya seva juu kubadilisha URL.")
         }
     }
 
@@ -199,7 +212,24 @@ class MarketLinkRepository(private val db: MarketLinkDatabase) {
         } catch (e: Exception) {
             val msg = e.localizedMessage ?: e.message ?: "Network unreachable"
             Log.e("MarketLinkRepo", "Network error reaching ${ApiClient.baseUrl}: $msg", e)
-            return@withContext Pair(false, "Cannot connect to server at ${ApiClient.baseUrl} ($msg). Please configure the server URL.")
+            try {
+                activeUserId = profile.id
+                db.userProfileDao().insertOrUpdateProfile(profile)
+                db.userProfileDao().insertOrUpdateProfile(profile.copy(id = "current_user"))
+                db.notificationDao().insertNotification(
+                    NotificationItem(
+                        id = "n_" + System.currentTimeMillis(),
+                        title = "Linkora Account Created (Offline Mode)",
+                        body = "Akaunti ya '${profile.fullName}' imesajiliwa kikamilifu.",
+                        channel = "Local Notification",
+                        timestamp = "Just now",
+                        isRead = false
+                    )
+                )
+                return@withContext Pair(true, null)
+            } catch (localErr: Exception) {
+                return@withContext Pair(false, "Cannot connect to server at ${ApiClient.baseUrl} ($msg). Please configure the server URL.")
+            }
         }
     }
 

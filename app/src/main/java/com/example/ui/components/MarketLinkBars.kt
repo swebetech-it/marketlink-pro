@@ -30,6 +30,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import com.example.R
 import com.example.data.model.UserRole
 import com.example.data.model.VerificationStatus
@@ -344,6 +345,11 @@ fun BackendServerConfigDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnClickOutside = false,
+            dismissOnBackPress = true
+        ),
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.Dns, contentDescription = null, tint = BrandBlue)
