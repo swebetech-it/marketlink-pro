@@ -18,6 +18,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.clickable
+import coil.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
 import com.example.data.model.UserProfile
 import com.example.data.model.VerificationStatus
 import com.example.ui.theme.*
@@ -27,7 +30,8 @@ fun ReputationPassportCard(
     profile: UserProfile,
     isSwahili: Boolean,
     onVouchClick: () -> Unit,
-    onExportPassportClick: () -> Unit
+    onExportPassportClick: () -> Unit,
+    onAvatarClick: (() -> Unit)? = null
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -53,18 +57,52 @@ fun ReputationPassportCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Surface(
-                            shape = CircleShape,
-                            color = GoldAccent,
-                            modifier = Modifier.size(48.dp)
+                        Box(
+                            contentAlignment = Alignment.BottomEnd,
+                            modifier = Modifier
+                                .clickable(enabled = onAvatarClick != null) { onAvatarClick?.invoke() }
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Default.Person,
-                                    contentDescription = null,
-                                    tint = EmeraldDark,
-                                    modifier = Modifier.size(28.dp)
-                                )
+                            Surface(
+                                shape = CircleShape,
+                                color = GoldAccent,
+                                modifier = Modifier.size(54.dp)
+                            ) {
+                                if (profile.avatarUrl.isNotBlank()) {
+                                    AsyncImage(
+                                        model = profile.avatarUrl,
+                                        contentDescription = "Avatar",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(CircleShape)
+                                    )
+                                } else {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            imageVector = Icons.Default.Person,
+                                            contentDescription = null,
+                                            tint = EmeraldDark,
+                                            modifier = Modifier.size(32.dp)
+                                        )
+                                    }
+                                }
+                            }
+
+                            // Camera edit badge
+                            Surface(
+                                shape = CircleShape,
+                                color = BrandOrange,
+                                border = androidx.compose.foundation.BorderStroke(1.5.dp, Color.White),
+                                modifier = Modifier.size(20.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Default.CameraAlt,
+                                        contentDescription = "Edit Avatar",
+                                        tint = Color.White,
+                                        modifier = Modifier.size(11.dp)
+                                    )
+                                }
                             }
                         }
                         Spacer(modifier = Modifier.width(12.dp))

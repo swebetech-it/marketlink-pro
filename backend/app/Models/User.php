@@ -42,17 +42,28 @@ class User extends Authenticatable
         'badges',
         'mfa_enabled',
         'language',
+        'avatar_url',
+        'password_reset_otp',
+        'password_reset_expires_at',
+        'referral_code',
+        'referred_by',
+        'referral_count',
+        'referral_earnings_tzs',
+        'fcm_token',
+        'device_type',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'password_reset_otp',
     ];
 
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
+            'password_reset_expires_at' => 'datetime',
             'password' => 'hashed',
             'skills' => 'array',
             'badges' => 'array',
@@ -61,8 +72,20 @@ class User extends Authenticatable
             'completed_gigs' => 'integer',
             'reputation_score' => 'integer',
             'community_vouches' => 'integer',
+            'referral_count' => 'integer',
+            'referral_earnings_tzs' => 'integer',
             'mfa_enabled' => 'boolean',
         ];
+    }
+
+    public function referrals()
+    {
+        return $this->hasMany(Referral::class, 'referrer_id');
+    }
+
+    public function referrer()
+    {
+        return $this->belongsTo(User::class, 'referred_by');
     }
 
     public function listings()

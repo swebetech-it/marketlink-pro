@@ -29,7 +29,7 @@ import com.example.data.model.NotificationItem
         Message::class,
         NotificationItem::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -82,6 +82,40 @@ abstract class MarketLinkDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                try {
+                    db.execSQL("ALTER TABLE user_profiles ADD COLUMN avatarUrl TEXT NOT NULL DEFAULT ''")
+                } catch (_: Exception) {}
+                try {
+                    db.execSQL("ALTER TABLE user_profiles ADD COLUMN referralCode TEXT NOT NULL DEFAULT ''")
+                } catch (_: Exception) {}
+                try {
+                    db.execSQL("ALTER TABLE user_profiles ADD COLUMN referredBy TEXT NOT NULL DEFAULT ''")
+                } catch (_: Exception) {}
+                try {
+                    db.execSQL("ALTER TABLE user_profiles ADD COLUMN referralCount INTEGER NOT NULL DEFAULT 0")
+                } catch (_: Exception) {}
+                try {
+                    db.execSQL("ALTER TABLE user_profiles ADD COLUMN referralEarningsTzs INTEGER NOT NULL DEFAULT 0")
+                } catch (_: Exception) {}
+            }
+        }
+
+        val MIGRATION_1_4 = object : Migration(1, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                MIGRATION_1_3.migrate(db)
+                MIGRATION_3_4.migrate(db)
+            }
+        }
+
+        val MIGRATION_2_4 = object : Migration(2, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                MIGRATION_2_3.migrate(db)
+                MIGRATION_3_4.migrate(db)
+            }
+        }
+
         fun getDatabase(context: Context): MarketLinkDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -89,7 +123,14 @@ abstract class MarketLinkDatabase : RoomDatabase() {
                     MarketLinkDatabase::class.java,
                     "marketlink_pro_db"
                 )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_1_3)
+                .addMigrations(
+                    MIGRATION_1_2,
+                    MIGRATION_2_3,
+                    MIGRATION_1_3,
+                    MIGRATION_3_4,
+                    MIGRATION_1_4,
+                    MIGRATION_2_4
+                )
                 .fallbackToDestructiveMigration(dropAllTables = true)
                 .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
                 .build()

@@ -29,7 +29,7 @@ class AuthScreenRobolectricTest {
                     onLanguageToggle = {},
                     onSignInSuccess = {},
                     onSignInWithCredentials = { _, _, onResult -> onResult(false, "Invalid") },
-                    onRegisterSubmit = { _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, onResult ->
+                    onRegisterSubmit = { _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, onResult ->
                         onResult(true, null)
                     }
                 )

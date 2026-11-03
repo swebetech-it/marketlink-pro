@@ -36,6 +36,26 @@ class MainActivity : ComponentActivity() {
         // Initialize ApiClient with persisted base URL
         com.example.data.remote.ApiClient.init(applicationContext)
 
+        // Initialize Notification Channels & request permissions
+        com.example.service.NotificationHelper.createNotificationChannel(applicationContext)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
+        }
+
+        // Retrieve and register FCM token with backend
+        try {
+            com.google.firebase.messaging.FirebaseMessaging.getInstance().token
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful && !task.result.isNullOrBlank()) {
+                        viewModel.registerFcmToken(task.result)
+                    }
+                }
+        } catch (e: Exception) {
+            android.util.Log.w("MainActivity", "Firebase Messaging: ${e.message}")
+        }
+
         // Schedule automated background sync with Laravel backend
         com.example.data.worker.MarketLinkSyncWorker.schedulePeriodicSync(applicationContext)
 
@@ -59,13 +79,19 @@ class MainActivity : ComponentActivity() {
                         onSignInWithCredentials = { login, password, onResult ->
                             viewModel.signInWithCredentials(login, password, onResult)
                         },
+                        onForgotPassword = { phone, onResult ->
+                            viewModel.forgotPassword(phone, onResult)
+                        },
+                        onResetPassword = { phone, otp, newPass, onResult ->
+                            viewModel.resetPassword(phone, otp, newPass, onResult)
+                        },
                         onUpdateBaseUrl = { url, onComplete ->
                             viewModel.updateServerBaseUrl(url, onComplete)
                         },
                         onTriggerSync = { onComplete ->
                             viewModel.triggerManualSync(onComplete)
                         },
-                        onRegisterSubmit = { name, phone, email, role, nida, loc, bio, skills, accountType, orgName, tin, sector, primaryProf, district, password, onResult ->
+                        onRegisterSubmit = { name, phone, email, role, nida, loc, bio, skills, accountType, orgName, tin, sector, primaryProf, district, password, refCode, avatarUrl, onResult ->
                             viewModel.registerUser(
                                 fullName = name,
                                 phone = phone,
@@ -82,6 +108,8 @@ class MainActivity : ComponentActivity() {
                                 primaryProfession = primaryProf,
                                 district = district,
                                 password = password,
+                                referralCode = refCode,
+                                avatarUrl = avatarUrl,
                                 onResult = onResult
                             )
                         }
@@ -214,6 +242,7 @@ class MainActivity : ComponentActivity() {
                                         isSwahili = uiState.isSwahili,
                                         onRequestNidaVerification = { viewModel.requestNidaVerification(it) },
                                         onVouchClick = { viewModel.vouchForUser() },
+                                        onUploadAvatar = { viewModel.uploadProfilePicture(it) },
                                         onLogoutClick = { showLogoutDialog = true }
                                     )
                                 }

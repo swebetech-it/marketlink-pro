@@ -42,6 +42,8 @@ fun AuthScreen(
     onLanguageToggle: (Boolean) -> Unit,
     onSignInSuccess: (UserProfile) -> Unit,
     onSignInWithCredentials: ((String, String?, (Boolean, String?) -> Unit) -> Unit)? = null,
+    onForgotPassword: ((String, (Boolean, String?, String?) -> Unit) -> Unit)? = null,
+    onResetPassword: ((String, String, String, (Boolean, String?) -> Unit) -> Unit)? = null,
     onUpdateBaseUrl: ((String, (Boolean) -> Unit) -> Unit)? = null,
     onTriggerSync: (((Boolean) -> Unit) -> Unit)? = null,
     onRegisterSubmit: (
@@ -60,6 +62,8 @@ fun AuthScreen(
         primaryProfession: String,
         district: String,
         password: String?,
+        referralCode: String,
+        avatarUrl: String,
         onResult: (Boolean, String?) -> Unit
     ) -> Unit
 ) {
@@ -74,6 +78,14 @@ fun AuthScreen(
     var isSyncingServer by remember { mutableStateOf(false) }
     var syncFeedbackMessage by remember { mutableStateOf<String?>(null) }
     var showServerConfigDialog by remember { mutableStateOf(false) }
+    var showForgotPasswordDialog by remember { mutableStateOf(false) }
+    var resetPhoneInput by remember { mutableStateOf("") }
+    var resetOtpInput by remember { mutableStateOf("") }
+    var resetNewPasswordInput by remember { mutableStateOf("") }
+    var resetStep by remember { mutableStateOf(1) }
+    var resetFeedbackMessage by remember { mutableStateOf<String?>(null) }
+    var resetErrorMessage by remember { mutableStateOf<String?>(null) }
+    var isResetLoading by remember { mutableStateOf(false) }
     var currentServerUrl by remember { mutableStateOf(com.example.data.remote.ApiClient.baseUrl) }
     var serverUrlInput by remember { mutableStateOf(com.example.data.remote.ApiClient.baseUrl) }
 
@@ -87,6 +99,7 @@ fun AuthScreen(
     var signUpDistrict by remember { mutableStateOf("Mbeya Mjini") }
     var signUpPhone by remember { mutableStateOf("+255 ") }
     var signUpEmail by remember { mutableStateOf("") }
+    var signUpReferralCode by remember { mutableStateOf("") }
     var signUpRole by remember { mutableStateOf(UserRole.JOB_SEEKER) }
     var roleDropdownExpanded by remember { mutableStateOf(false) }
     var professionDropdownExpanded by remember { mutableStateOf(false) }
@@ -423,7 +436,31 @@ fun AuthScreen(
                                     .testTag("signin_password_input")
                             )
 
-                            Spacer(modifier = Modifier.height(18.dp))
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Text(
+                                    text = if (isSwahili) "Umesahau Nenosiri?" else "Forgot Password?",
+                                    color = BrandBlue,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier
+                                        .clickable {
+                                            resetPhoneInput = signInPhoneOrEmail
+                                            resetStep = 1
+                                            resetErrorMessage = null
+                                            resetFeedbackMessage = null
+                                            showForgotPasswordDialog = true
+                                        }
+                                        .padding(vertical = 4.dp)
+                                        .testTag("forgot_password_button")
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(14.dp))
 
                             // Sign In Button
                             Button(
@@ -893,6 +930,22 @@ fun AuthScreen(
                                     .testTag("signup_password_input")
                             )
 
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            // Referral Code (Optional)
+                            OutlinedTextField(
+                                value = signUpReferralCode,
+                                onValueChange = { signUpReferralCode = it.uppercase() },
+                                label = { Text(if (isSwahili) "Namba ya Mwaliko (Hiari) / Referral Code" else "Referral Code (Optional)") },
+                                placeholder = { Text("Mfano: LNK-XXXXXX") },
+                                leadingIcon = { Icon(Icons.Default.CardGiftcard, contentDescription = null, tint = BrandOrange) },
+                                singleLine = true,
+                                colors = formTextFieldColors(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .testTag("signup_referral_code_input")
+                            )
+
                             Spacer(modifier = Modifier.height(18.dp))
 
                             // Create Account Submit Button
@@ -928,7 +981,9 @@ fun AuthScreen(
                                         signUpIndustrySector,
                                         signUpPrimaryProfession,
                                         signUpDistrict,
-                                        signUpPassword.trim().ifEmpty { null }
+                                        signUpPassword.trim().ifEmpty { null },
+                                        signUpReferralCode.trim(),
+                                        ""
                                     ) { success, err ->
                                         isSigningIn = false
                                         if (!success) {
@@ -993,6 +1048,168 @@ fun AuthScreen(
                     } else {
                         com.example.data.remote.ApiClient.updateBaseUrl(newUrl)
                         onDone(true)
+                    }
+                }
+            )
+        }
+
+        if (showForgotPasswordDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    if (!isResetLoading) showForgotPasswordDialog = false
+                },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.LockReset, contentDescription = null, tint = BrandBlue)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (isSwahili) "Kurejesha Nenosiri" else "Reset Password",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                    }
+                },
+                text = {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        if (resetErrorMessage != null) {
+                            Text(
+                                text = resetErrorMessage!!,
+                                color = RedWarning,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                        }
+
+                        if (resetFeedbackMessage != null) {
+                            Text(
+                                text = resetFeedbackMessage!!,
+                                color = BrandGreen,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                        }
+
+                        if (resetStep == 1) {
+                            Text(
+                                text = if (isSwahili)
+                                    "Weka namba yako ya simu uliyosajiliwa nayo. Tutakutumia kodi ya siri ya tarakimu 6 (OTP) kupitia SMS."
+                                else
+                                    "Enter your registered phone number. We will send a 6-digit OTP code via SMS.",
+                                fontSize = 13.sp,
+                                color = SlateTextSecondary
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            OutlinedTextField(
+                                value = resetPhoneInput,
+                                onValueChange = { resetPhoneInput = it },
+                                label = { Text(if (isSwahili) "Namba ya Simu" else "Phone Number") },
+                                placeholder = { Text("+255 7XX XXX XXX") },
+                                leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = BrandBlue) },
+                                singleLine = true,
+                                colors = formTextFieldColors(),
+                                modifier = Modifier.fillMaxWidth().testTag("reset_phone_input")
+                            )
+                        } else {
+                            Text(
+                                text = if (isSwahili)
+                                    "Ingiza kodi ya OTP iliyotumwa kwa SMS na uweke nenosiri lako jipya."
+                                else
+                                    "Enter the OTP code received via SMS and set your new password.",
+                                fontSize = 13.sp,
+                                color = SlateTextSecondary
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            OutlinedTextField(
+                                value = resetOtpInput,
+                                onValueChange = { resetOtpInput = it },
+                                label = { Text("Kodi ya OTP (6 digits)") },
+                                placeholder = { Text("Mfano: 482910") },
+                                leadingIcon = { Icon(Icons.Default.Pin, contentDescription = null, tint = BrandBlue) },
+                                singleLine = true,
+                                colors = formTextFieldColors(),
+                                modifier = Modifier.fillMaxWidth().testTag("reset_otp_input")
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            OutlinedTextField(
+                                value = resetNewPasswordInput,
+                                onValueChange = { resetNewPasswordInput = it },
+                                label = { Text(if (isSwahili) "Nenosiri Jipya" else "New Password") },
+                                leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = BrandBlue) },
+                                visualTransformation = PasswordVisualTransformation(),
+                                singleLine = true,
+                                colors = formTextFieldColors(),
+                                modifier = Modifier.fillMaxWidth().testTag("reset_new_password_input")
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            if (resetStep == 1) {
+                                if (resetPhoneInput.isBlank()) {
+                                    resetErrorMessage = if (isSwahili) "Weka namba ya simu." else "Enter phone number."
+                                    return@Button
+                                }
+                                isResetLoading = true
+                                resetErrorMessage = null
+                                onForgotPassword?.invoke(resetPhoneInput.trim()) { success, otp, msg ->
+                                    isResetLoading = false
+                                    if (success) {
+                                        resetStep = 2
+                                        if (!otp.isNullOrBlank()) {
+                                            resetOtpInput = otp
+                                        }
+                                        resetFeedbackMessage = msg ?: (if (isSwahili) "Kodi ya OTP imetumwa!" else "OTP code sent!")
+                                    } else {
+                                        resetErrorMessage = msg ?: (if (isSwahili) "Akaunti haikupatikana." else "Account not found.")
+                                    }
+                                }
+                            } else {
+                                if (resetOtpInput.isBlank() || resetNewPasswordInput.length < 4) {
+                                    resetErrorMessage = if (isSwahili) "Jaza OTP na nenosiri lenye herufi zisizopungua 4." else "Enter OTP and at least 4 characters password."
+                                    return@Button
+                                }
+                                isResetLoading = true
+                                resetErrorMessage = null
+                                onResetPassword?.invoke(resetPhoneInput.trim(), resetOtpInput.trim(), resetNewPasswordInput.trim()) { success, err ->
+                                    isResetLoading = false
+                                    if (success) {
+                                        signInPhoneOrEmail = resetPhoneInput.trim()
+                                        signInPassword = resetNewPasswordInput.trim()
+                                        showForgotPasswordDialog = false
+                                        resetErrorMessage = null
+                                        signInErrorMessage = null
+                                        syncFeedbackMessage = if (isSwahili) "Nenosiri limebadilishwa! Karibu uingie sasa." else "Password changed! You can sign in now."
+                                    } else {
+                                        resetErrorMessage = err ?: (if (isSwahili) "Kodi ya OTP si sahihi." else "Invalid OTP code.")
+                                    }
+                                }
+                            }
+                        },
+                        enabled = !isResetLoading,
+                        colors = ButtonDefaults.buttonColors(containerColor = BrandBlue, contentColor = Color.White)
+                    ) {
+                        if (isResetLoading) {
+                            CircularProgressIndicator(color = Color.White, modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                            Spacer(modifier = Modifier.width(6.dp))
+                        }
+                        Text(
+                            text = if (resetStep == 1)
+                                (if (isSwahili) "Tuma Kodi ya OTP" else "Send OTP Code")
+                            else
+                                (if (isSwahili) "Badili Nenosiri" else "Reset Password")
+                        )
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showForgotPasswordDialog = false },
+                        enabled = !isResetLoading
+                    ) {
+                        Text(if (isSwahili) "Ghairi" else "Cancel")
                     }
                 }
             )

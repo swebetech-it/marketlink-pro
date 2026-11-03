@@ -18,11 +18,16 @@ use App\Http\Controllers\Api\DeployWebhookController;
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('/verify-reset-otp', [AuthController::class, 'verifyResetOtp']);
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 });
 
 Route::prefix('users')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::get('/', [AuthController::class, 'index']);
+    Route::post('/{id}/avatar', [AuthController::class, 'uploadAvatar']);
+    Route::get('/{id}/referrals', [AuthController::class, 'referralStats']);
     Route::put('/{id}/verify-nida', [AuthController::class, 'verifyNida']);
     Route::post('/{id}/vouch', [AuthController::class, 'vouch']);
     Route::put('/{id}/role', [AuthController::class, 'updateRole']);
@@ -87,6 +92,8 @@ Route::prefix('messages')->group(function () {
 // Notifications
 Route::prefix('notifications')->group(function () {
     Route::get('/', [NotificationController::class, 'index']);
+    Route::post('/fcm-token', [NotificationController::class, 'registerFcmToken']);
+    Route::post('/test-push', [NotificationController::class, 'sendTestNotification']);
     Route::put('/{id}/read', [NotificationController::class, 'markAsRead']);
 });
 

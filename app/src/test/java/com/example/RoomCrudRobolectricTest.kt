@@ -159,4 +159,37 @@ class RoomCrudRobolectricTest {
         allTxs = txDao.getAllTransactions().first()
         assertEquals(EscrowStatus.RELEASED, allTxs.first().escrowStatus)
     }
+
+    @Test
+    fun testNewFeaturesProfileFields() = runBlocking {
+        val dao = db.userProfileDao()
+
+        val user = UserProfile(
+            id = "usr_new_feat",
+            fullName = "Amina Mwangi",
+            phone = "+255711998877",
+            email = "amina@linkora.co.tz",
+            role = UserRole.FREELANCER,
+            accountType = "INDIVIDUAL",
+            verificationStatus = VerificationStatus.VERIFIED,
+            location = "Dar es Salaam",
+            bio = "Digital Marketing Specialist",
+            skills = listOf("SEO", "Content"),
+            avatarUrl = "https://linkora.co.tz/storage/avatars/avatar_amina.png",
+            referralCode = "LNK-AMINA1",
+            referredBy = "usr_referrer_001",
+            referralCount = 5,
+            referralEarningsTzs = 10000L
+        )
+
+        dao.insertOrUpdateProfile(user)
+
+        val retrieved = dao.getUserProfileOnce("usr_new_feat")
+        assertNotNull(retrieved)
+        assertEquals("https://linkora.co.tz/storage/avatars/avatar_amina.png", retrieved?.avatarUrl)
+        assertEquals("LNK-AMINA1", retrieved?.referralCode)
+        assertEquals("usr_referrer_001", retrieved?.referredBy)
+        assertEquals(5, retrieved?.referralCount)
+        assertEquals(10000L, retrieved?.referralEarningsTzs)
+    }
 }

@@ -26,7 +26,9 @@ data class RegisterRequest(
     val nidaNumber: String,
     val location: String,
     val bio: String,
-    val skills: List<String>
+    val skills: List<String>,
+    val referralCode: String? = null,
+    val avatarUrl: String? = null
 )
 
 data class NidaVerificationRequest(
@@ -131,6 +133,28 @@ interface MarketLinkApiService {
 
     @POST("api/auth/register")
     suspend fun registerUser(@Body request: RegisterRequest): Response<ApiResponse<UserProfile>>
+
+    // Password Recovery
+    @POST("api/auth/forgot-password")
+    suspend fun forgotPassword(@Body body: Map<String, String>): Response<ApiResponse<ForgotPasswordResponse>>
+
+    @POST("api/auth/verify-reset-otp")
+    suspend fun verifyResetOtp(@Body body: Map<String, String>): Response<ApiResponse<Any>>
+
+    @POST("api/auth/reset-password")
+    suspend fun resetPassword(@Body body: Map<String, String>): Response<ApiResponse<UserProfile>>
+
+    // Profile Picture & Referrals
+    @POST("api/users/{id}/avatar")
+    suspend fun updateAvatar(
+        @Path("id") userId: String,
+        @Body body: Map<String, String>
+    ): Response<ApiResponse<UserProfile>>
+
+    @GET("api/users/{id}/referrals")
+    suspend fun getReferralStats(
+        @Path("id") userId: String
+    ): Response<ApiResponse<ReferralStatsResponse>>
 
     @GET("api/users/profile")
     suspend fun getCurrentUserProfile(
@@ -238,6 +262,12 @@ interface MarketLinkApiService {
     suspend fun getNotifications(
         @Header("X-User-Id") userId: String? = null
     ): Response<ApiResponse<List<NotificationItem>>>
+
+    @POST("api/notifications/fcm-token")
+    suspend fun registerFcmToken(@Body body: Map<String, String>): Response<ApiResponse<Any>>
+
+    @POST("api/notifications/test-push")
+    suspend fun sendTestNotification(@Body body: Map<String, String>): Response<ApiResponse<Any>>
 
     // AI Endpoints
     @POST("api/ai/match")

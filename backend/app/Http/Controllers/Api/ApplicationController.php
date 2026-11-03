@@ -110,6 +110,19 @@ class ApplicationController extends Controller
         // Also record in central database for applicant tracking
         $application = Application::create($appRecord);
 
+        // Notify poster/employer if found
+        if ($listing && $listing->poster_id) {
+            $poster = User::find($listing->poster_id);
+            if ($poster) {
+                app(\App\Services\PushNotificationService::class)->notifyUser(
+                    $poster,
+                    'Maombi Mapya ya Kazi / New Application',
+                    "{$applicantName} ametuma maombi kwenye nafasi ya '{$validated['listingTitle']}'. Fungua kupitia sifa zake.",
+                    ['type' => 'NEW_APPLICATION', 'application_id' => $application->id]
+                );
+            }
+        }
+
         NotificationItem::create([
             'id' => 'n_' . round(microtime(true) * 1000),
             'user_id' => $applicantId,

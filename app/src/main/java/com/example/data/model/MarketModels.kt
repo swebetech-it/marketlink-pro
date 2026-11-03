@@ -62,6 +62,11 @@ data class UserProfile(
     val reputationScore: Int = 0, // out of 1000
     val communityVouches: Int = 0,
     val badges: List<String> = emptyList(),
+    val avatarUrl: String = "",
+    val referralCode: String = "",
+    val referredBy: String = "",
+    val referralCount: Int = 0,
+    val referralEarningsTzs: Long = 0L,
     val tenantId: String? = null,
     val tenantDatabase: String? = null,
     val isolationLevel: String? = "SHARED"
@@ -188,4 +193,28 @@ data class NotificationItem(
     val channel: String, // "In-App", "SMS (Africa's Talking)", "WhatsApp", "USSD Alert"
     val timestamp: String,
     val isRead: Boolean = false
+)
+
+data class ReferralStatItem(
+    val id: String = "",
+    val referredName: String = "",
+    val referredPhone: String = "",
+    val rewardAmountTzs: Long = 0L,
+    val status: String = "",
+    val date: String = ""
+)
+
+data class ReferralStatsResponse(
+    val referralCode: String = "",
+    val referralCount: Int = 0,
+    val referralEarningsTzs: Long = 0L,
+    val reputationPointsEarned: Int = 0,
+    val referrals: List<ReferralStatItem> = emptyList()
+)
+
+data class ForgotPasswordResponse(
+    val success: Boolean = true,
+    val message: String = "",
+    val otp: String? = null,
+    val phone: String? = null
 )

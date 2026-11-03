@@ -184,7 +184,9 @@ class MarketLinkRepository(private val db: MarketLinkDatabase) {
                     nidaNumber = profile.nidaNumber,
                     location = profile.location,
                     bio = profile.bio,
-                    skills = profile.skills
+                    skills = profile.skills,
+                    referralCode = profile.referralCode.ifBlank { null },
+                    avatarUrl = profile.avatarUrl.ifBlank { null }
                 )
             )
             if (response.isSuccessful && response.body()?.data != null) {
@@ -465,6 +467,104 @@ class MarketLinkRepository(private val db: MarketLinkDatabase) {
             ApiClient.apiService.sendMessage(SendMessageRequest(listingId = listingId, text = text))
         } catch (e: Exception) {
             Log.w("MarketLinkRepo", "Message cached locally: ${e.message}")
+        }
+    }
+
+    suspend fun updateAvatar(userId: String, avatarUrlOrBase64: String): Pair<UserProfile?, String?> = withContext(Dispatchers.IO) {
+        try {
+            val payload = if (avatarUrlOrBase64.startsWith("data:image") || !avatarUrlOrBase64.startsWith("http")) {
+                mapOf("avatar_base64" to avatarUrlOrBase64)
+            } else {
+                mapOf("avatar_url" to avatarUrlOrBase64)
+            }
+            val response = ApiClient.apiService.updateAvatar(userId, payload)
+            if (response.isSuccessful && response.body()?.data != null) {
+                val updated = response.body()!!.data!!
+                db.userProfileDao().insertOrUpdateProfile(updated)
+                db.userProfileDao().insertOrUpdateProfile(updated.copy(id = "current_user"))
+                return@withContext Pair(updated, null)
+            }
+            Pair(null, response.body()?.message ?: "Hitilafu katika kupakia picha")
+        } catch (e: Exception) {
+            Log.e("MarketLinkRepo", "Avatar upload failed: ${e.message}")
+            val local = db.userProfileDao().getUserProfileOnce("current_user")
+            if (local != null) {
+                val updated = local.copy(avatarUrl = avatarUrlOrBase64)
+                db.userProfileDao().insertOrUpdateProfile(updated)
+                return@withContext Pair(updated, null)
+            }
+            Pair(null, e.localizedMessage ?: "Hitilafu ya mtandao")
+        }
+    }
+
+    suspend fun forgotPassword(phone: String): Pair<ForgotPasswordResponse?, String?> = withContext(Dispatchers.IO) {
+        try {
+            val response = ApiClient.apiService.forgotPassword(mapOf("phone" to phone))
+            if (response.isSuccessful && response.body() != null) {
+                val body = response.body()!!
+                val res = body.data ?: ForgotPasswordResponse(
+                    success = body.success,
+                    message = body.message ?: "Kodi imetumwa",
+                    phone = phone
+                )
+                return@withContext Pair(res, null)
+            }
+            Pair(null, response.body()?.message ?: "Akaunti haikupatikana kwa namba hii")
+        } catch (e: Exception) {
+            Log.e("MarketLinkRepo", "Forgot password error: ${e.message}")
+            Pair(null, e.localizedMessage ?: "Hitilafu ya mtandao")
+        }
+    }
+
+    suspend fun verifyResetOtp(phone: String, otp: String): Pair<Boolean, String?> = withContext(Dispatchers.IO) {
+        try {
+            val response = ApiClient.apiService.verifyResetOtp(mapOf("phone" to phone, "otp" to otp))
+            if (response.isSuccessful && (response.body()?.success == true)) {
+                return@withContext Pair(true, null)
+            }
+            Pair(false, response.body()?.message ?: "Kodi ya OTP si sahihi")
+        } catch (e: Exception) {
+            Pair(false, e.localizedMessage ?: "Hitilafu ya mtandao")
+        }
+    }
+
+    suspend fun resetPassword(phone: String, otp: String, newPass: String): Pair<UserProfile?, String?> = withContext(Dispatchers.IO) {
+        try {
+            val response = ApiClient.apiService.resetPassword(mapOf("phone" to phone, "otp" to otp, "newPassword" to newPass))
+            if (response.isSuccessful && response.body()?.data != null) {
+                val profile = response.body()!!.data!!
+                activeUserId = profile.id
+                db.userProfileDao().insertOrUpdateProfile(profile)
+                db.userProfileDao().insertOrUpdateProfile(profile.copy(id = "current_user"))
+                return@withContext Pair(profile, null)
+            }
+            Pair(null, response.body()?.message ?: "Imeshindwa kubadili nenosiri")
+        } catch (e: Exception) {
+            Pair(null, e.localizedMessage ?: "Hitilafu ya mtandao")
+        }
+    }
+
+    suspend fun getReferralStats(userId: String): Pair<ReferralStatsResponse?, String?> = withContext(Dispatchers.IO) {
+        try {
+            val response = ApiClient.apiService.getReferralStats(userId)
+            if (response.isSuccessful && response.body()?.data != null) {
+                return@withContext Pair(response.body()!!.data, null)
+            }
+            Pair(null, response.body()?.message ?: "Taarifa za mwaliko hazikupatikana")
+        } catch (e: Exception) {
+            Pair(null, e.localizedMessage ?: "Hitilafu ya mtandao")
+        }
+    }
+
+    suspend fun registerFcmToken(userId: String, token: String): Pair<Boolean, String?> = withContext(Dispatchers.IO) {
+        try {
+            val response = ApiClient.apiService.registerFcmToken(mapOf("userId" to userId, "fcmToken" to token, "deviceType" to "android"))
+            if (response.isSuccessful && response.body()?.success == true) {
+                return@withContext Pair(true, null)
+            }
+            Pair(false, response.body()?.message ?: "Imeshindwa kusajili token ya FCM")
+        } catch (e: Exception) {
+            Pair(false, e.localizedMessage ?: "Hitilafu ya mtandao")
         }
     }
 }

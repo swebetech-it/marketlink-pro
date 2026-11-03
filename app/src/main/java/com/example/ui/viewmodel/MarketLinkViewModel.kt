@@ -548,6 +548,8 @@ private data class RepoPartB(
         primaryProfession: String = "",
         district: String = "",
         password: String? = null,
+        referralCode: String = "",
+        avatarUrl: String = "",
         onResult: ((Boolean, String?) -> Unit)? = null
     ) {
         viewModelScope.launch {
@@ -575,7 +577,9 @@ private data class RepoPartB(
                     completedGigs = 0,
                     reputationScore = if (nidaNumber.isNotBlank() || tinNumber.isNotBlank()) 850 else 700,
                     communityVouches = 0,
-                    badges = if (accountType == "ORGANIZATION") listOf("Verified Organization") else if (nidaNumber.isNotBlank()) listOf("NIDA Verified") else emptyList()
+                    badges = if (accountType == "ORGANIZATION") listOf("Verified Organization") else if (nidaNumber.isNotBlank()) listOf("NIDA Verified") else emptyList(),
+                    avatarUrl = avatarUrl,
+                    referralCode = referralCode
                 )
                 val (success, err) = repository.registerNewUser(profile, password)
                 if (success) {
@@ -679,6 +683,75 @@ private data class RepoPartB(
             _selectedRole.value = UserRole.JOB_SEEKER
             _isViewingPublicDirectory.value = false
             _isLoggedIn.value = false
+        }
+    }
+
+    // Profile Picture (Avatar)
+    fun uploadProfilePicture(avatarUrlOrBase64: String, onResult: ((Boolean, String?) -> Unit)? = null) {
+        viewModelScope.launch {
+            val user = repository.userProfile.first() ?: defaultUserProfile
+            val (updated, err) = repository.updateAvatar(user.id, avatarUrlOrBase64)
+            if (updated != null) {
+                onResult?.invoke(true, null)
+            } else {
+                onResult?.invoke(false, err)
+            }
+        }
+    }
+
+    // Password Recovery
+    fun forgotPassword(phone: String, onResult: (Boolean, String?, String?) -> Unit) {
+        viewModelScope.launch {
+            val (res, err) = repository.forgotPassword(phone)
+            if (res != null) {
+                onResult(true, res.otp, res.message)
+            } else {
+                onResult(false, null, err)
+            }
+        }
+    }
+
+    fun verifyResetOtp(phone: String, otp: String, onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            val (success, err) = repository.verifyResetOtp(phone, otp)
+            onResult(success, err)
+        }
+    }
+
+    fun resetPassword(phone: String, otp: String, newPass: String, onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            val (user, err) = repository.resetPassword(phone, otp, newPass)
+            if (user != null) {
+                _selectedRole.value = user.role
+                _isLoggedIn.value = true
+                onResult(true, null)
+            } else {
+                onResult(false, err)
+            }
+        }
+    }
+
+    // Referral System
+    private val _referralStats = MutableStateFlow<ReferralStatsResponse?>(null)
+    val referralStats: StateFlow<ReferralStatsResponse?> = _referralStats.asStateFlow()
+
+    fun fetchReferralStats() {
+        viewModelScope.launch {
+            val user = repository.userProfile.first()
+            if (user != null && user.id != "guest_user") {
+                val (stats, _) = repository.getReferralStats(user.id)
+                _referralStats.value = stats
+            }
+        }
+    }
+
+    // Push Notification FCM Token
+    fun registerFcmToken(token: String) {
+        viewModelScope.launch {
+            val user = repository.userProfile.first()
+            if (user != null && user.id != "guest_user") {
+                repository.registerFcmToken(user.id, token)
+            }
         }
     }
 }
