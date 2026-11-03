@@ -39,36 +39,25 @@ class LandingPageController extends Controller
             ]);
         }
 
-        // Gather real statistics and recent listings gracefully
+        // System architectural guarantees & real operational parameters (no false vanity metrics)
         $stats = [
-            'total_listings' => 250,
-            'verified_pros' => 1200,
-            'escrow_secured' => 'TZS 45M+',
-            'districts_covered' => '31 Mikoa',
+            'kyc_status' => '100% NIDA',
+            'escrow_protection' => '100% Escrow',
+            'regions_covered' => 'Mikoa 31',
+            'channel_access' => 'App & USSD',
         ];
 
         $recentListings = [];
 
         try {
             if (class_exists(Listing::class)) {
-                $dbListings = Listing::latest()->take(6)->get();
+                $dbListings = Listing::where('status', 'ACTIVE')->latest()->take(6)->get();
                 if ($dbListings->count() > 0) {
                     $recentListings = $dbListings;
                 }
-                $count = Listing::count();
-                if ($count > 0) {
-                    $stats['total_listings'] = $count;
-                }
-            }
-
-            if (class_exists(User::class)) {
-                $userCount = User::where('is_nida_verified', true)->count();
-                if ($userCount > 0) {
-                    $stats['verified_pros'] = $userCount;
-                }
             }
         } catch (\Throwable $e) {
-            // Fallback to static display if DB connection is offline during build/local preview
+            // Graceful fallback if database connection is unavailable during build/cache
         }
 
         return view('landing', compact('stats', 'recentListings'));

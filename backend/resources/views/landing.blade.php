@@ -168,7 +168,7 @@
                 <a href="#aina-za-kazi" class="hover:text-emerald-400 transition-colors">Aina za Kazi</a>
                 <a href="#jinsi-inavyofanya-kazi" class="hover:text-emerald-400 transition-colors">Jinsi Inavyofanya Kazi</a>
                 <a href="#usalama-escrow" class="hover:text-emerald-400 transition-colors">Usalama wa Malipo</a>
-                <a href="#mashuhuda" class="hover:text-emerald-400 transition-colors">Wafanyakazi Wetu</a>
+                <a href="#suluhu" class="hover:text-emerald-400 transition-colors">Kwa Nini Linkora?</a>
                 <a href="#maswali" class="hover:text-emerald-400 transition-colors">Maswali (FAQ)</a>
             </nav>
 
@@ -224,25 +224,18 @@
                         </a>
                     </div>
 
-                    <!-- Social Proof Avatars & Real Stats -->
-                    <div class="pt-6 border-t border-[#1c2733] flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 text-left">
-                        <div class="flex -space-x-3">
-                            <img class="w-10 h-10 rounded-full border-2 border-[#0b1116] object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" alt="Juma K. - Fundi Umeme">
-                            <img class="w-10 h-10 rounded-full border-2 border-[#0b1116] object-cover" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80" alt="Rehema M. - Msimamizi">
-                            <img class="w-10 h-10 rounded-full border-2 border-[#0b1116] object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" alt="Aloyce S. - Fundi Mabomba">
-                            <img class="w-10 h-10 rounded-full border-2 border-[#0b1116] object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Neema J. - Mhasibu">
+                    <!-- Pre-Launch Verification & Trust Assurance (Authentic & Transparent) -->
+                    <div class="pt-6 border-t border-[#1c2733] flex items-center justify-center lg:justify-start gap-4 text-left">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl shrink-0">
+                            <i class="fa-solid fa-shield-halved"></i>
                         </div>
                         <div>
-                            <div class="flex items-center gap-1 text-amberWarm-500 text-xs">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <span class="font-bold text-white text-xs ml-1">4.9 / 5</span>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-white text-sm">Uhakiki Rasmi wa NIDA & Ulinzi wa Escrow</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-forest-900 text-emerald-400 border border-forest-700">100% Salama</span>
                             </div>
-                            <div class="text-xs text-slate-400 mt-0.5">
-                                Zaidi ya mafundi na wataalamu <strong class="text-white">{{ $stats['verified_pros'] ?? '1,200+' }}</strong> wenye NIDA tayari wamejiunga
+                            <div class="text-xs text-slate-400 mt-1">
+                                Kila mwanachama anathibitishwa na Mfumo wa Vitambulisho vya Taifa kabla ya kupewa au kutoa kazi.
                             </div>
                         </div>
                     </div>
@@ -315,7 +308,7 @@
             
             <div class="bg-forest-900 text-emerald-300 text-xs font-bold uppercase tracking-wider px-4 py-2 border-r border-forest-700 shrink-0 z-10 flex items-center gap-2">
                 <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Fursa za Sasa Hivi:</span>
+                <span>Aina za Kazi Zinazoungwa Mkono:</span>
             </div>
 
             <!-- Continuous Moving Stream of Real Jobs Across Tanzania -->
@@ -392,25 +385,37 @@
         </div>
     </section>
 
-    <!-- REAL STATS STRIP (SOLID, CLEAN, CREDIBLE) -->
+    <!-- PLATFORM ARCHITECTURAL PILLARS (CREDIBLE, TRUTHFUL, ACCURATE) -->
     <section class="border-b border-[#1b2530] bg-[#0d1319] py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                 <div class="p-3">
-                    <div class="display-font text-3xl sm:text-4xl font-bold text-white">{{ $stats['total_listings'] ?? '250+' }}</div>
-                    <div class="text-xs sm:text-sm text-slate-400 mt-1 font-medium">Nafasi za Kazi na Vibarua Zilizopo</div>
+                    <div class="display-font text-2xl sm:text-3xl font-bold text-white flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-id-card text-emerald-400 text-xl"></i>
+                        <span>NIDA KYC</span>
+                    </div>
+                    <div class="text-xs sm:text-sm text-slate-400 mt-1.5 font-medium">Uhakiki wa Utambulisho wa Taifa</div>
                 </div>
                 <div class="p-3 border-l border-[#1f2a36]">
-                    <div class="display-font text-3xl sm:text-4xl font-bold text-emerald-400">{{ $stats['verified_pros'] ?? '1,200+' }}</div>
-                    <div class="text-xs sm:text-sm text-slate-400 mt-1 font-medium">Mafundi Wenye Uhakiki wa NIDA</div>
+                    <div class="display-font text-2xl sm:text-3xl font-bold text-emerald-400 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-emerald-400 text-xl"></i>
+                        <span>100% Escrow</span>
+                    </div>
+                    <div class="text-xs sm:text-sm text-slate-400 mt-1.5 font-medium">Ulinzi Kamili wa Fedha za Kazi</div>
                 </div>
                 <div class="p-3 border-l border-[#1f2a36]">
-                    <div class="display-font text-3xl sm:text-4xl font-bold text-amberWarm-500">{{ $stats['escrow_secured'] ?? 'TZS 45M+' }}</div>
-                    <div class="text-xs sm:text-sm text-slate-400 mt-1 font-medium">Fedha Zilizolindwa na Escrow</div>
+                    <div class="display-font text-2xl sm:text-3xl font-bold text-amberWarm-500 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-map-location-dot text-amberWarm-500 text-xl"></i>
+                        <span>Mikoa 31</span>
+                    </div>
+                    <div class="text-xs sm:text-sm text-slate-400 mt-1.5 font-medium">Imeundwa kwa Tanzania Nzima</div>
                 </div>
                 <div class="p-3 border-l border-[#1f2a36]">
-                    <div class="display-font text-3xl sm:text-4xl font-bold text-white">{{ $stats['districts_covered'] ?? 'Mikoa 31' }}</div>
-                    <div class="text-xs sm:text-sm text-slate-400 mt-1 font-medium">Huduma Inafika Tanzania Nzima</div>
+                    <div class="display-font text-2xl sm:text-3xl font-bold text-blue-400 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-mobile-screen text-blue-400 text-xl"></i>
+                        <span>App & USSD</span>
+                    </div>
+                    <div class="text-xs sm:text-sm text-slate-400 mt-1.5 font-medium">Simu Janja na Simu ya Kitochi</div>
                 </div>
             </div>
         </div>
@@ -588,13 +593,13 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                 <div>
                     <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase bg-[#13221b] px-3.5 py-1.5 rounded-full border border-forest-700">
-                        Nafasi Zilizopo
+                        Sekta na Fursa
                     </span>
                     <h2 class="display-font text-3xl sm:text-4xl font-bold text-white mt-3">
-                        Kazi na Vibarua Vinavyohitajika Sasa Hivi
+                        Mifano ya Kazi na Vibarua Vinavyoungwa Mkono
                     </h2>
                     <p class="text-slate-400 text-sm mt-2 max-w-xl">
-                        Tazama mifano ya fursa zilizowekwa hivi karibuni na waajiri na wateja kutoka mikoa mbalimbali ya Tanzania.
+                        Tazama jinsi fursa za kazi na vibarua vinavyopangwa kwa uwazi, viwango vya ujira, na mfumo thabiti wa amana ya malipo (Escrow).
                     </p>
                 </div>
 
@@ -826,96 +831,78 @@
         </div>
     </section>
 
-    <!-- REAL PEOPLE TESTIMONIALS (REAL NAMES, REAL FACES, REAL STORIES) -->
-    <section id="mashuhuda" class="py-16 md:py-24 border-b border-[#1b2530] bg-[#0c1218]">
+    <!-- CORE VALUE PROPOSITION & REAL PROBLEMS LINKORA SOLVES (AUTHENTIC & TRANSPARENT) -->
+    <section id="suluhu" class="py-16 md:py-24 border-b border-[#1b2530] bg-[#0c1218]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <div class="text-center max-w-2xl mx-auto mb-14">
                 <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase bg-[#13221b] px-3.5 py-1.5 rounded-full border border-forest-700">
-                    Watu Halisi, Ushuhuda Halisi
+                    Suluhu ya Changamoto Halisi
                 </span>
                 <h2 class="display-font text-3xl sm:text-4xl font-bold text-white mt-4">
-                    Walivyopata uhakika wa maisha na ajira kupitia Linkora
+                    Kwanini Linkora Imeundwa: Kutatua Vikwazo vya Kazi Tanzania
                 </h2>
                 <p class="text-slate-400 text-sm mt-2">
-                    Soma maoni ya mafundi, vibarua na wamiliki wa miradi wanaotumia jukwaa letu kila siku nchini Tanzania.
+                    Tumeunda mfumo huu mahsusi kuondoa dhuluma ya ujira, kuzuia utapeli, na kukuunganisha na kazi au mafundi wa karibu bila gharama za madalali.
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 
-                <!-- Story 1 -->
+                <!-- Pillar 1: Escrow Protection -->
                 <div class="tactile-card rounded-2xl p-6 flex flex-col justify-between">
                     <div>
-                        <div class="flex items-center gap-1 text-amberWarm-500 text-xs mb-3">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
+                        <div class="w-12 h-12 rounded-xl bg-forest-900 border border-forest-700 text-emerald-400 flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-lock"></i>
                         </div>
-                        <p class="text-xs sm:text-sm text-slate-200 leading-relaxed italic">
-                            "Zamani nilikuwa ninafanya kazi kisha mwenye nyumba anazima simu bila kunilipa ujira wangu. Tangu nianze kupokea kazi kupitia Linkora, kila kazi inalindwa na Escrow kwanza. Hakuna tena kufanya kazi bure."
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400">Ulinzi Dhidi ya Dhuluma</span>
+                        <h3 class="text-base font-bold text-white mt-1 mb-2">Mfumo Salama wa Escrow</h3>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            Mwajiri anaweka malipo kwenye akaunti salama ya amana (Escrow) kabla kazi haijaanza. Fundi anafanya kazi akiwa na amani kamili kwamba fedha ipo, na ataipokea moja kwa moja kwenye simu yake mara tu kazi inapothibitishwa.
                         </p>
                     </div>
 
-                    <div class="flex items-center gap-3 pt-6 mt-6 border-t border-[#1f2b38]">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" alt="Rashid Mwalimu" class="w-12 h-12 rounded-full object-cover border border-emerald-500/40">
-                        <div>
-                            <h4 class="text-sm font-bold text-white">Rashid Mwalimu</h4>
-                            <p class="text-xs text-slate-400">Fundi Umeme, Tegeta Dar es Salaam</p>
-                            <span class="text-[10px] text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check"></i> NIDA Verified</span>
-                        </div>
+                    <div class="pt-5 mt-5 border-t border-[#1f2b38] flex items-center gap-2 text-xs text-emerald-400 font-semibold">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Hakuna tena kufanya kazi bure</span>
                     </div>
                 </div>
 
-                <!-- Story 2 -->
+                <!-- Pillar 2: NIDA Identity Verification -->
                 <div class="tactile-card rounded-2xl p-6 flex flex-col justify-between">
                     <div>
-                        <div class="flex items-center gap-1 text-amberWarm-500 text-xs mb-3">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
+                        <div class="w-12 h-12 rounded-xl bg-emerald-950/60 border border-emerald-800/80 text-emerald-300 flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-id-card"></i>
                         </div>
-                        <p class="text-xs sm:text-sm text-slate-200 leading-relaxed italic">
-                            "Kupata mafundi wenye uaminifu ilikuwa ni bahati nasibu. Nilitafuta fundi seremala wa kutengeneza makabati ya jikoni, nikampata kupitia Linkora akiwa na vyeti na NIDA. Kazi imefanyika kwa wakati na uzuri wa hali ya juu."
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400">Komesha Utapeli</span>
+                        <h3 class="text-base font-bold text-white mt-1 mb-2">Uhakiki wa Vitambulisho vya NIDA</h3>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            Kila mtu anayejiunga anathibitishwa na Mfumo wa Vitambulisho vya Taifa (NIDA). Mwajiri anamruhusu fundi kuingia nyumbani au ofisini akiwa na amani kamili akijua utambulisho wake unatambulika kisheria.
                         </p>
                     </div>
 
-                    <div class="flex items-center gap-3 pt-6 mt-6 border-t border-[#1f2b38]">
-                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80" alt="Zainab Kibona" class="w-12 h-12 rounded-full object-cover border border-emerald-500/40">
-                        <div>
-                            <h4 class="text-sm font-bold text-white">Zainab Kibona</h4>
-                            <p class="text-xs text-slate-400">Msimamizi wa Mradi, Mbeya</p>
-                            <span class="text-[10px] text-emerald-400 font-semibold"><i class="fa-solid fa-building"></i> Mwajiri Aliyethibitishwa</span>
-                        </div>
+                    <div class="pt-5 mt-5 border-t border-[#1f2b38] flex items-center gap-2 text-xs text-emerald-400 font-semibold">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Usalama wa mali na familia yako</span>
                     </div>
                 </div>
 
-                <!-- Story 3 -->
+                <!-- Pillar 3: District Local Proximity -->
                 <div class="tactile-card rounded-2xl p-6 flex flex-col justify-between">
                     <div>
-                        <div class="flex items-center gap-1 text-amberWarm-500 text-xs mb-3">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
+                        <div class="w-12 h-12 rounded-xl bg-blue-950/60 border border-blue-800/80 text-blue-400 flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-map-location-dot"></i>
                         </div>
-                        <p class="text-xs sm:text-sm text-slate-200 leading-relaxed italic">
-                            "App inaniwezesha kuona vibarua vilivyopo karibu na wilaya yangu. Nikimaliza tu kazi mteja anathibitisha na malipo yanaingia kwenye M-Pesa yangu papo hapo bila kuomba omba wala kubembelezana."
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-blue-400">Bila Gharama za Madalali</span>
+                        <h3 class="text-base font-bold text-white mt-1 mb-2">Fursa za Wilaya na Kata Yako</h3>
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            App inatambua eneo lako na kukuletea fursa au mafundi waliopo karibu na wilaya yako. Hakuna tena kupoteza fedha kwenye nauli ndefu au kulipa asilimia kubwa kwa madalali wa mitaani.
                         </p>
                     </div>
 
-                    <div class="flex items-center gap-3 pt-6 mt-6 border-t border-[#1f2b38]">
-                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" alt="Aloyce Shirima" class="w-12 h-12 rounded-full object-cover border border-emerald-500/40">
-                        <div>
-                            <h4 class="text-sm font-bold text-white">Aloyce Shirima</h4>
-                            <p class="text-xs text-slate-400">Fundi Mabomba, Arusha Mjini</p>
-                            <span class="text-[10px] text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check"></i> Kazi 42 Zimekamilika</span>
-                        </div>
+                    <div class="pt-5 mt-5 border-t border-[#1f2b38] flex items-center gap-2 text-xs text-blue-400 font-semibold">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Kipato chote kinabaki mikononi mwako</span>
                     </div>
                 </div>
 
