@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\DeployWebhookController;
+use App\Http\Controllers\Api\VoiceJobController;
 
 // Auth & Users
 Route::prefix('auth')->group(function () {
@@ -63,6 +64,18 @@ Route::prefix('ai')->group(function () {
     Route::post('/match', [AiController::class, 'match']);
     Route::post('/fraud-check', [AiController::class, 'fraudCheck']);
     Route::post('/generate-pitch', [AiController::class, 'generatePitch']);
+    Route::post('/voice-announce', [VoiceJobController::class, 'announceJobByVoice']);
+});
+
+// AI Voice Job Announcement & Phone Interview Engine (Africa's Talking + Gemini)
+Route::prefix('voice')->group(function () {
+    Route::post('/announce-job', [VoiceJobController::class, 'announceJobByVoice']);
+    Route::post('/initiate-interview', [VoiceJobController::class, 'initiateInterview']);
+    Route::get('/interviews/{id}', [VoiceJobController::class, 'showInterview']);
+    Route::get('/listings/{listingId}/interviews', [VoiceJobController::class, 'listInterviewsForListing']);
+    Route::post('/interviews/{id}/simulate', [VoiceJobController::class, 'simulateInterview']);
+    Route::match(['get', 'post'], '/callback', [VoiceJobController::class, 'handleVoiceCallback']);
+    Route::match(['get', 'post'], '/recording-callback', [VoiceJobController::class, 'handleRecordingCallback']);
 });
 
 // USSD Gateway (Africa's Talking webhook & Simulator)

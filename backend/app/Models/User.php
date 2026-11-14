@@ -33,6 +33,8 @@ class User extends Authenticatable
         'nida_number',
         'location',
         'bio',
+        'cv_text',
+        'years_of_experience',
         'skills',
         'rating',
         'total_transactions',

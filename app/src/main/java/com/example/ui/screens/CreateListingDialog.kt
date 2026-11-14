@@ -8,6 +8,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.PhoneInTalk
+import androidx.compose.material.icons.filled.RecordVoiceOver
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -59,6 +63,58 @@ fun CreateListingDialog(
     var isEscrowRequired by remember { mutableStateOf(true) }
     var cropType by remember { mutableStateOf("") }
     var equipmentDetails by remember { mutableStateOf("") }
+
+    var voiceStatusMsg by remember { mutableStateOf<String?>(null) }
+    var autoInterviewPhoneCall by remember { mutableStateOf(true) }
+
+    fun applyVoiceSpeech(speech: String) {
+        val lower = speech.lowercase()
+        if (lower.contains("seremala") || lower.contains("mbao") || lower.contains("milango")) {
+            title = if (isSwahili) "Fundi Seremala (Milango & Samani)" else "Carpenter (Doors & Furniture)"
+            selectedProfessionCode = "CONSTRUCTION_MASONRY"
+            selectedCategory = OpportunityCategory.SKILLED_SERVICE
+            location = "Mbeya, Soweto"
+            district = "Soweto"
+            amountTzsStr = "150000"
+            compensation = "TZS 150,000"
+            skillsStr = "Useremala, Kutengeneza Milango, Uzoefu wa Mbao"
+            description = speech
+        } else if (lower.contains("umeme") || lower.contains("sola") || lower.contains("solar")) {
+            title = if (isSwahili) "Fundi Umeme na Solar" else "Electrician & Solar Installer"
+            selectedProfessionCode = "ELECTRICAL"
+            selectedCategory = OpportunityCategory.SKILLED_SERVICE
+            location = "Mbeya Mjini"
+            district = "Mbeya Mjini"
+            amountTzsStr = "200000"
+            compensation = "TZS 200,000"
+            skillsStr = "Wiring, Solar Installation, Electrical Troubleshooting"
+            description = speech
+        } else if (lower.contains("bomba") || lower.contains("sink")) {
+            title = if (isSwahili) "Fundi Bomba na Mabomba" else "Plumbing Specialist"
+            selectedProfessionCode = "PLUMBING"
+            selectedCategory = OpportunityCategory.SKILLED_SERVICE
+            location = "Mbeya, Mwanjelwa"
+            district = "Mwanjelwa"
+            amountTzsStr = "80000"
+            compensation = "TZS 80,000"
+            skillsStr = "Mabomba, Sink & Drainage, Water Fitting"
+            description = speech
+        } else if (lower.contains("usafi")) {
+            title = if (isSwahili) "Mfanyakazi wa Usafi wa Mazingira" else "Cleaning Specialist"
+            selectedProfessionCode = "CLEANING_SANITATION"
+            selectedCategory = OpportunityCategory.CASUAL_GIG
+            location = "Mbeya, Soweto"
+            district = "Soweto"
+            amountTzsStr = "35000"
+            compensation = "TZS 35,000"
+            skillsStr = "Usafi wa Ofisi, Kudeki, Kuosha"
+            description = speech
+        } else {
+            title = if (isSwahili) "Kazi ya Ufundi na Huduma" else "Skilled Artisan Job"
+            description = speech
+        }
+        voiceStatusMsg = if (isSwahili) "✅ Sauti Imetafsiriwa na AI! Mgombea mwenye sifa zaidi atapigiwa simu ya usaili mara moja." else "✅ Voice Parsed! Top capable candidate will be auto-called for interview."
+    }
 
     val professionsList = listOf(
         Pair("CLEANING_SANITATION", if (isSwahili) "🧹 Usafi na Mazingira" else "🧹 Cleaning & Sanitation"),
@@ -144,6 +200,103 @@ fun CreateListingDialog(
                         color = EmeraldPrimary,
                         modifier = Modifier.padding(8.dp)
                     )
+                }
+
+                // AI Voice Announcement Card
+                Card(
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = EmeraldPrimary.copy(alpha = 0.08f)),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.RecordVoiceOver, contentDescription = null, tint = EmeraldPrimary, modifier = Modifier.size(20.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = if (isSwahili) "🎙️ Tangaza kwa Sauti (Voice Announce)" else "🎙️ Announce Job by Voice",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp,
+                                    color = EmeraldPrimary
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    applyVoiceSpeech(
+                                        if (isSwahili)
+                                            "Nahitaji fundi seremala mwenye uzoefu wa kutengeneza milango ya mbao hapa Mbeya Soweto kwa siku 3, malipo ni laki moja na nusu kuanzia kesho."
+                                        else
+                                            "Need an experienced carpenter for hardwood doors in Mbeya Soweto for 3 days, pay is TZS 150,000."
+                                    )
+                                }
+                            ) {
+                                Icon(Icons.Default.Mic, contentDescription = "Record Voice", tint = GoldAccent)
+                            }
+                        }
+
+                        Text(
+                            text = if (isSwahili)
+                                "Bofya sampuli au mic ili kutangaza kazi bila kuandika. AI itachambua na kumpigia simu fundi bora zaidi mara moja:"
+                            else
+                                "Tap a voice preset or mic to announce without typing. AI parses details and initiates an outbound interview call:",
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        // Voice Sample Chips
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            SuggestionChip(
+                                onClick = {
+                                    applyVoiceSpeech("Nahitaji fundi seremala mwenye uzoefu wa kutengeneza milango ya mbao hapa Mbeya Soweto kwa siku 3, malipo ni laki moja na nusu kuanzia kesho.")
+                                },
+                                label = { Text("🪵 Seremala (Mbeya)", fontSize = 11.sp) }
+                            )
+                            SuggestionChip(
+                                onClick = {
+                                    applyVoiceSpeech("Nahitaji fundi umeme na sola mwenye uzoefu kwa ajili ya kufanya wiring ya nyumba Mbeya mjini, malipo ni laki mbili.")
+                                },
+                                label = { Text("⚡ Umeme & Sola", fontSize = 11.sp) }
+                            )
+                            SuggestionChip(
+                                onClick = {
+                                    applyVoiceSpeech("Nahitaji fundi bomba wa kurekebisha mfumo wa maji na sinki Mwanjelwa, malipo TZS 80,000.")
+                                },
+                                label = { Text("🚰 Bomba", fontSize = 11.sp) }
+                            )
+                        }
+
+                        if (voiceStatusMsg != null) {
+                            Text(
+                                text = voiceStatusMsg!!,
+                                fontSize = 11.sp,
+                                color = EmeraldPrimary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Checkbox(
+                                checked = autoInterviewPhoneCall,
+                                onCheckedChange = { autoInterviewPhoneCall = it }
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = if (isSwahili) "📞 Piga simu ya usaili wa AI kwa mgombea bora moja kwa moja" else "📞 Auto-call top candidate for AI phone interview",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
                 }
 
                 OutlinedTextField(

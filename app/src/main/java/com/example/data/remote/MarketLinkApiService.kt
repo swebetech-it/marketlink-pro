@@ -105,6 +105,18 @@ data class AiPitchRequest(
     val isSwahili: Boolean
 )
 
+data class VoiceAnnounceRequest(
+    val speech_text: String? = null,
+    val voice_transcript: String? = null,
+    val auto_interview: Boolean = true,
+    val posterId: String? = null
+)
+
+data class VoiceAnnounceData(
+    val listing: Listing? = null,
+    val interview: VoiceInterviewData? = null
+)
+
 data class AiPitchResponse(
     val pitch: String
 )
@@ -282,4 +294,14 @@ interface MarketLinkApiService {
     // USSD Gateway Simulator
     @POST("api/ussd/simulate")
     suspend fun simulateUssd(@Body request: UssdSimulateRequest): Response<ApiResponse<UssdSimulateResponse>>
+
+    // Voice-to-Job & AI Phone Interview
+    @POST("api/voice/announce-job")
+    suspend fun announceJobByVoice(@Body request: VoiceAnnounceRequest): Response<ApiResponse<VoiceAnnounceData>>
+
+    @GET("api/voice/listings/{listingId}/interviews")
+    suspend fun getInterviewsForListing(@Path("listingId") listingId: String): Response<ApiResponse<List<VoiceInterviewData>>>
+
+    @POST("api/voice/interviews/{id}/simulate")
+    suspend fun simulateInterview(@Path("id") interviewId: String, @Body body: Map<String, String> = emptyMap()): Response<ApiResponse<VoiceInterviewData>>
 }

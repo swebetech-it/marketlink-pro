@@ -218,3 +218,36 @@ data class ForgotPasswordResponse(
     val otp: String? = null,
     val phone: String? = null
 )
+
+data class VoiceInterviewQuestion(
+    val id: String = "",
+    val question: String = "",
+    val rationale: String? = null
+)
+
+data class VoiceInterviewAnswer(
+    val question_id: String? = null,
+    val question_text: String? = null,
+    val answer_transcript: String? = null,
+    val audio_url: String? = null,
+    val answered_at: String? = null
+)
+
+data class VoiceInterviewData(
+    val id: String = "",
+    val listingId: String = "",
+    val candidateId: String = "",
+    val candidateName: String = "",
+    val candidatePhone: String = "",
+    val status: String = "CALLING",
+    val questions: List<VoiceInterviewQuestion> = emptyList(),
+    val answers: List<VoiceInterviewAnswer> = emptyList(),
+    val overallScore: Int? = null,
+    val technicalFit: String? = null,
+    val availabilityConfirmed: Boolean = false,
+    val toolsReady: Boolean = false,
+    val rateAccepted: Boolean = false,
+    val recommendation: String? = null,
+    val aiSummary: String? = null,
+    val fullTranscript: String? = null
+)

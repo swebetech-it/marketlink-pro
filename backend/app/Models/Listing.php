@@ -39,6 +39,8 @@ class Listing extends Model
         'is_flagged_suspicious',
         'fraud_risk_score',
         'status',
+        'voice_announced',
+        'voice_announcement_audio_url',
     ];
 
     protected function casts(): array
@@ -69,5 +71,10 @@ class Listing extends Model
     public function messages()
     {
         return $this->hasMany(Message::class, 'listing_id');
+    }
+
+    public function voiceInterviews()
+    {
+        return $this->hasMany(VoiceInterview::class, 'listing_id');
     }
 }

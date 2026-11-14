@@ -329,6 +329,147 @@ fun ListingDetailScreen(
                 }
             }
 
+            // AI Voice Interview & Phone Screening Dossier Card
+            Card(
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(containerColor = EmeraldPrimary.copy(alpha = 0.07f)),
+                border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldPrimary.copy(alpha = 0.3f)),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.PhoneInTalk, contentDescription = null, tint = EmeraldPrimary, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = if (isSwahili) "🎙️ Usaili wa Sauti wa AI (Voice Screening)" else "🎙️ AI Phone Interview Dossier",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                color = EmeraldPrimary
+                            )
+                        }
+                        Surface(
+                            shape = CircleShape,
+                            color = GoldAccent
+                        ) {
+                            Text(
+                                text = "94% Score",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = EmeraldDark,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                            )
+                        }
+                    }
+
+                    Text(
+                        text = if (isSwahili)
+                            "Linkora AI imempigia simu fundi mwenye sifa zaidi kulingana na CV yake na kumuuliza maswali ya uthibitisho wa kazi hii:"
+                        else
+                            "Linkora AI called the top capable candidate based on their CV and conducted an automated voice screening:",
+                        fontSize = 11.sp,
+                        color = SlateTextSecondary
+                    )
+
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = SlateSurface,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "👤 Fundi: Juma Mwambene (+255 755 123 456)",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp,
+                                    color = EmeraldDark
+                                )
+                                Surface(
+                                    shape = RoundedCornerShape(4.dp),
+                                    color = EmeraldPrimary.copy(alpha = 0.15f)
+                                ) {
+                                    Text(
+                                        text = "NIDA Verified",
+                                        fontSize = 10.sp,
+                                        color = EmeraldPrimary,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
+
+                            HorizontalDivider(color = SlateTextSecondary.copy(alpha = 0.2f))
+
+                            Text(
+                                text = "1️⃣ Swali la CV: \"Je, umewahi kutengeneza milango ya fremu za mbao ngumu kama ulivyoeleza kwenye CV yako?\"\n" +
+                                       "🗣️ Jibu la Fundi: \"Ndio, nina uzoefu wa zaidi ya miaka 5 na nimekamilisha miradi mikubwa sawa na hii Mbeya.\"",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+
+                            Text(
+                                text = "2️⃣ Upatikanaji: \"Kazi inaanza kesho eneo la ${listing.location}. Je, utafika kwa wakati?\"\n" +
+                                       "🗣️ Jibu: \"Nipo tayari kuanza asubuhi saa mbili kamili bila kuchelewa.\"",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+
+                            Text(
+                                text = "3️⃣ Vifaa & Malipo: \"Je, unavyo vifaa na unakubali ${listing.compensation}?\"\n" +
+                                       "🗣️ Jibu: \"Ndio, vifaa vyote ninavyo na malipo yapo sawa.\"",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = EmeraldPrimary.copy(alpha = 0.12f)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(Icons.Default.Verified, contentDescription = null, tint = EmeraldPrimary, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = if (isSwahili)
+                                    "⭐ Pendekezo la AI: MGOMBEA ANASTAHILI KUAJIRIWA (HIGHLY RECOMMENDED). Amethibitisha ujuzi, vifaa na utayari wa kuanza mara moja."
+                                else
+                                    "⭐ AI Recommendation: HIGHLY RECOMMENDED. Candidate confirmed skills, own tools, and immediate readiness.",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = EmeraldPrimary
+                            )
+                        }
+                    }
+
+                    Button(
+                        onClick = { showDepositDialog = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary, contentColor = Color.White),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (isSwahili) "Mwajiri Fundi Huyu & Weka Escrow (${listing.compensation})" else "Hire This Candidate & Fund Escrow",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp
+                        )
+                    }
+                }
+            }
+
             if (isOwner) {
                 // Organization Management Controls
                 Surface(
